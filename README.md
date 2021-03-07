@@ -1,5 +1,5 @@
 # Simple DiscordPY Bot Template with Cogs
-A lot of people request bots from me, and it does get a bit annoying re-coding the same framework over and over again, so I made this simple template adaptation from my framework.
+A lot of people request bots from me, and it does get a bit annoying re-coding the same framework over and over again, so I made this simple template adaptation.
 
 ### Confused? Look at the DiscordPY documentation.
 https://discordpy.readthedocs.io/en/latest/index.html
