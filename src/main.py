@@ -1,4 +1,4 @@
-import configparser # the module that parses config.ini and makles it readable
+import configparser # the module that parses config.ini and makes it readable
 import discord # the actual discord.py wrapper module
 from discord.ext import commands # discord commands module
 import os # allows you to interact with system files
