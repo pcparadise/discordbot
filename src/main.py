@@ -1,7 +1,7 @@
 import configparser # the module that parses config.ini and makles it readable
 import discord # the actual discord.py wrapper module
 from discord.ext import commands # discord commands module
-import os # allowsy you to interact with files
+import os # allows you to interact with system files
 
 # initializes and parses the config.ini file so its readable
 CONFIG = configparser.ConfigParser() 
