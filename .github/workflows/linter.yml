@@ -11,5 +11,7 @@ jobs:
                   python-version: 3.9
             - name: install pylint
               run: pip install pylint
+            - name: install dependencies
+              run: pip install -r requirements.txt
             - name: check pylint
               run: pylint **/*.py
