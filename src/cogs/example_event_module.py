@@ -4,11 +4,13 @@ An example module for future contributors to reference using events.
 
 from discord.ext import commands
 
+
 class ExampleEventModule(commands.Cog):
     """
     An example class that inherits from commands.Cog for contributors to reference.
     This one uses events unlike the one in example_command_module
     """
+
     def __init__(self, bot):
         self.bot = bot
 
