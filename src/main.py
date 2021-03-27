@@ -14,7 +14,7 @@ PREFIX = CONFIG.get("Bot", "Prefix")
 BOT = commands.Bot(command_prefix=PREFIX)
 
 # add your module name here once completed
-MODULES = ["decisions"]
+MODULES = []
 
 
 def main():
