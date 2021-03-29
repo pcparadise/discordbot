@@ -64,8 +64,10 @@ class Help(commands.Cog):
         lower_cmd_list = []
         uncategorized_cmd_dict = {}
         uncategorized_cmd_list_lower = []
+        disabled_cmd_list = []
 
         for cog in self.bot.cogs:
+            disabled_cog_cmd_list = []
             cmd_dict = {}
             for cmd in self.bot.get_cog(cog).get_commands():
                 cmd_item = {
@@ -84,8 +86,12 @@ class Help(commands.Cog):
                 }
                 lower_cmd_list.append(cmd.name.lower())
                 cmd_dict.update(cmd_item)
+                if not cmd.enabled:
+                    disabled_cmd_list.append(cmd.name)
+                    disabled_cog_cmd_list.append(cmd.name)
+
             cog_dict[cog] = {
-                "command_count": (len(self.bot.get_cog(cog).get_commands())),
+                "command_count": (len(self.bot.get_cog(cog).get_commands()) - len(disabled_cog_cmd_list)),
                 "commands": cmd_dict,
             }
             lower_cog_list.append(cog.lower())
@@ -133,16 +139,19 @@ class Help(commands.Cog):
             description_string = ""
             for item in parsable_json["commands"]:
                 doc_item = parsable_json["commands"][item]
-                alias_string = ""
-                for alias in doc_item["aliases"]:
-                    if alias:
-                        alias_string += f"``{alias}``, "
-                alias_string = alias_string[:-2]
-                dash = ", " if alias_string else ""
-                usage = ""
-                if doc_item["usage"]:
-                    usage = doc_item["usage"]
-                description_string += f'``{item}``{dash}{alias_string}:\n{doc_item["doc_string"]}\n```{self.prefix}{item} {usage}```\n\n'
+                if doc_item["name"] in disabled_cmd_list:
+                    pass
+                else:
+                    alias_string = ""
+                    for alias in doc_item["aliases"]:
+                        if alias:
+                            alias_string += f"``{alias}``, "
+                    alias_string = alias_string[:-2]
+                    dash = ", " if alias_string else ""
+                    usage = ""
+                    if doc_item["usage"]:
+                        usage = doc_item["usage"]
+                    description_string += f'``{item}``{dash}{alias_string}:\n{doc_item["doc_string"]}\n```{self.prefix}{item} {usage}```\n\n'
 
             embed = discord.Embed(
                 title=f"{argument.capitalize()} Module:",
