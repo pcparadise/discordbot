@@ -7,22 +7,34 @@ import configparser
 import discord
 from discord.ext import commands
 
-# todo: about command
-# todo: contrib command
-# todo: docs command
-# todo: check out ordered dicts
-
 
 class Help(commands.Cog):
     """Defines everything related towards the help command."""
 
     def __init__(self, bot):
+        self.embed_color = discord.Color.blurple()
         self.bot = bot
         self.config = configparser.ConfigParser()
         self.config.read("../config.ini")
         self.prefix = self.config.get("Bot", "Prefix")
 
-    @commands.command(name="dump_help_json", enabled=True)
+    @commands.command(name="contrib", enabled=True)
+    async def send_contribution_info(self, ctx):
+        """Contains information about how to contribute to the bot."""
+
+        contributing_md_url = (
+            "https://github.com/pcparadise/discordbot/blob/main/CONTRIBUTING.md"
+        )
+
+        embed = discord.Embed(
+            title="How To Contribute:",
+            description=f"Visit: [{contributing_md_url[8:]}]({contributing_md_url})",
+            color=self.embed_color,
+        )
+
+        await ctx.send(embed=embed)
+
+    @commands.command(name="dump_help_json", enabled=False)
     async def dump_help_json(self, ctx):
         """Dumps all help data into a parsable json format. Useful for debugging."""
         cog_dict = {}
@@ -43,16 +55,15 @@ class Help(commands.Cog):
     @commands.command(name="help", aliases=["h"], usage=f"[command_name|cog_name]")
     async def send_help(self, ctx, *args):
         """Provides information about available commands."""
-        embed_color = discord.Color.blurple()
 
-        argument = str(" ".join(args)).lower().strip()
+        argument = " ".join(args).lower().strip()
 
         cog_dict = {}
         lower_cog_list = []
         cmd_dict = {}
         lower_cmd_list = []
         uncategorized_cmd_dict = {}
-        uncategorized_cmds_lower = []
+        uncategorized_cmd_list_lower = []
 
         for cog in self.bot.cogs:
             cmd_dict = {}
@@ -81,7 +92,7 @@ class Help(commands.Cog):
 
         for cmd in self.bot.walk_commands():
             if not cmd.name.lower() in lower_cmd_list:
-                uncategorized_cmds_lower.append(cmd.name.lower())
+                uncategorized_cmd_list_lower.append(cmd.name.lower())
                 uncategorized_cmd_dict[cmd.name] = {
                     "name": cmd.name,
                     "usage": cmd.usage,
@@ -93,7 +104,7 @@ class Help(commands.Cog):
             embed = discord.Embed(
                 title="Commands and modules",
                 description=f"View a specific module or commands info with:\n```{self.prefix}help [module_name|command_name]```",
-                color=embed_color,
+                color=self.embed_color,
             )
 
             for cog in cog_dict:
@@ -136,17 +147,17 @@ class Help(commands.Cog):
             embed = discord.Embed(
                 title=f"{argument.capitalize()} Module:",
                 description=description_string,
-                color=embed_color,
+                color=self.embed_color,
             )
 
             await ctx.send(embed=embed)
-        elif argument in lower_cmd_list or argument in uncategorized_cmds_lower:
+        elif argument in lower_cmd_list or argument in uncategorized_cmd_list_lower:
             if argument in lower_cmd_list:
                 parsable_json = cmd_dict[list(cmd_dict)[lower_cmd_list.index(argument)]]
-            elif argument in uncategorized_cmds_lower:
+            elif argument in uncategorized_cmd_list_lower:
                 parsable_json = uncategorized_cmd_dict[
                     list(uncategorized_cmd_dict)[
-                        uncategorized_cmds_lower.index(argument)
+                        uncategorized_cmd_list_lower.index(argument)
                     ]
                 ]
 
@@ -160,7 +171,7 @@ class Help(commands.Cog):
             embed = discord.Embed(
                 title=f'{parsable_json["name"]} command:',
                 description=f'{doc_string}\n**Example Usage:**```{self.prefix}{parsable_json["name"]} {usage}```',
-                color=embed_color,
+                color=self.embed_color,
             )
 
             await ctx.send(embed=embed)
@@ -168,7 +179,7 @@ class Help(commands.Cog):
             embed = discord.Embed(
                 title="404: Command or Module Not Found.",
                 description=f"See: `{self.prefix}help`",
-                color=embed_color,
+                color=self.embed_color,
             )
 
             await ctx.send(embed=embed)
