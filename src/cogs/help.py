@@ -91,7 +91,10 @@ class Help(commands.Cog):
                     disabled_cog_cmd_list.append(cmd.name)
 
             cog_dict[cog] = {
-                "command_count": (len(self.bot.get_cog(cog).get_commands()) - len(disabled_cog_cmd_list)),
+                "command_count": (
+                    len(self.bot.get_cog(cog).get_commands())
+                    - len(disabled_cog_cmd_list)
+                ),
                 "commands": cmd_dict,
             }
             lower_cog_list.append(cog.lower())
@@ -109,14 +112,17 @@ class Help(commands.Cog):
         if not args:  # builds the embed if no arguments where provided
             embed = discord.Embed(
                 title="Commands and modules",
-                description=f"View a specific module or commands info with:\n```{self.prefix}help [module_name|command_name]```",
+                description=(
+                    f"View a specific module or commands info with:\n"
+                    f"```{self.prefix}help [module_name|command_name]```"
+                ),
                 color=self.embed_color,
             )
 
             for cog in cog_dict:
                 embed.add_field(
                     name=cog,
-                    value=f'``{cog_dict[cog]["command_count"]} commands``',
+                    value=f'`{cog_dict[cog]["command_count"]} commands`',
                     inline=True,
                 )
 
@@ -145,13 +151,17 @@ class Help(commands.Cog):
                     alias_string = ""
                     for alias in doc_item["aliases"]:
                         if alias:
-                            alias_string += f"``{alias}``, "
+                            alias_string += f"`{alias}`, "
                     alias_string = alias_string[:-2]
                     dash = ", " if alias_string else ""
                     usage = ""
                     if doc_item["usage"]:
                         usage = doc_item["usage"]
-                    description_string += f'``{item}``{dash}{alias_string}:\n{doc_item["doc_string"]}\n```{self.prefix}{item} {usage}```\n\n'
+                    description_string += (
+                        f"`{item}`{dash}{alias_string}:\n"
+                        f'{doc_item["doc_string"]}\n'
+                        f"```{self.prefix}{item} {usage}```\n\n"
+                    )
 
             embed = discord.Embed(
                 title=f"{argument.capitalize()} Module:",
@@ -179,7 +189,11 @@ class Help(commands.Cog):
 
             embed = discord.Embed(
                 title=f'{parsable_json["name"]} command:',
-                description=f'{doc_string}\n**Example Usage:**```{self.prefix}{parsable_json["name"]} {usage}```',
+                description=(
+                    f"{doc_string}\n"
+                    f"**Example Usage:**\n"
+                    f'```{self.prefix}{parsable_json["name"]} {usage}```'
+                ),
                 color=self.embed_color,
             )
 
