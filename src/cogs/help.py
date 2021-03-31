@@ -78,20 +78,15 @@ class Help(commands.Cog):
             disabled_cog_cmd_list = []
             cmd_dict = {}
             for cmd in self.bot.get_cog(cog).get_commands():
-                cmd_item = {
-                    cmd.name: {
-                        "name": cmd.name,
-                        "usage": cmd.usage,
-                        "doc_string": cmd.help,
-                        "aliases": cmd.aliases,
-                    }
-                }
-                cmd_dict[cmd.name] = {
+                cmd_info = {
                     "name": cmd.name,
                     "usage": cmd.usage,
                     "doc_string": cmd.help,
                     "aliases": cmd.aliases,
                 }
+                cmd_item = {cmd.name: cmd_info}
+                cmd_dict[cmd.name] = cmd_info
+
                 cmd_dict.update(cmd_item)
                 if not cmd.enabled:
                     disabled_cmd_list.append(cmd.name)
