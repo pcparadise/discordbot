@@ -8,6 +8,17 @@ import discord
 from discord.ext import commands
 
 
+def find_case_insensitive(dictionary, string):
+    """
+    Returns a value for a key in a dictionary. Unlike normal indexing
+    this is case insensitive, and returns None if no value exists
+    """
+    for key, value in dictionary.items():
+        if key.lower() == string.lower():
+            return value
+    return None
+
+
 class Help(commands.Cog):
     """Defines everything related towards the help command."""
 
@@ -59,11 +70,8 @@ class Help(commands.Cog):
         argument = " ".join(args).lower().strip()
 
         cog_dict = {}
-        lower_cog_list = []
         cmd_dict = {}
-        lower_cmd_list = []
         uncategorized_cmd_dict = {}
-        uncategorized_cmd_list_lower = []
         disabled_cmd_list = []
 
         for cog in self.bot.cogs:
@@ -84,7 +92,6 @@ class Help(commands.Cog):
                     "doc_string": cmd.help,
                     "aliases": cmd.aliases,
                 }
-                lower_cmd_list.append(cmd.name.lower())
                 cmd_dict.update(cmd_item)
                 if not cmd.enabled:
                     disabled_cmd_list.append(cmd.name)
@@ -97,11 +104,9 @@ class Help(commands.Cog):
                 ),
                 "commands": cmd_dict,
             }
-            lower_cog_list.append(cog.lower())
 
         for cmd in self.bot.walk_commands():
-            if not cmd.name.lower() in lower_cmd_list:
-                uncategorized_cmd_list_lower.append(cmd.name.lower())
+            if not cmd.name in cmd_dict.keys():
                 uncategorized_cmd_dict[cmd.name] = {
                     "name": cmd.name,
                     "usage": cmd.usage,
@@ -128,7 +133,7 @@ class Help(commands.Cog):
 
             uncategorized_commands = ""
             for cmd in self.bot.walk_commands():
-                if not cmd.name.lower() in lower_cmd_list:
+                if not cmd.name.lower() in cmd_dict.keys():
                     uncategorized_commands += f"`{cmd.name}`, \n"
 
             if uncategorized_commands:
@@ -139,8 +144,8 @@ class Help(commands.Cog):
                 )
 
             await ctx.send(embed=embed)
-        elif argument in lower_cog_list:
-            parsable_json = cog_dict[list(cog_dict)[lower_cog_list.index(argument)]]
+        elif find_case_insensitive(cog_dict, argument):
+            parsable_json = find_case_insensitive(cog_dict, argument)
 
             description_string = ""
             for item in parsable_json["commands"]:
@@ -170,15 +175,12 @@ class Help(commands.Cog):
             )
 
             await ctx.send(embed=embed)
-        elif argument in lower_cmd_list or argument in uncategorized_cmd_list_lower:
-            if argument in lower_cmd_list:
-                parsable_json = cmd_dict[list(cmd_dict)[lower_cmd_list.index(argument)]]
-            elif argument in uncategorized_cmd_list_lower:
-                parsable_json = uncategorized_cmd_dict[
-                    list(uncategorized_cmd_dict)[
-                        uncategorized_cmd_list_lower.index(argument)
-                    ]
-                ]
+        elif find_case_insensitive(cmd_dict, argument) or find_case_insensitive(
+            uncategorized_cmd_dict, argument
+        ):
+            parsable_json = find_case_insensitive(cmd_dict, argument)
+            if not parsable_json:
+                parsable_json = find_case_insensitive(uncategorized_cmd_dict, argument)
 
             usage = "" if not parsable_json["usage"] else parsable_json["usage"]
             doc_string = (
