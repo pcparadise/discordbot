@@ -113,7 +113,7 @@ class Help(commands.Cog):
     """Defines everything related towards the help command."""
 
     def __init__(self, bot):
-        self.embed_color = discord.Color(0x2f3136)
+        self.embed_color = discord.Color(0x2F3136)
         self.bot = bot
         self.config = configparser.ConfigParser()
         self.config.read("../config.ini")
