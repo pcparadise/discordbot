@@ -6,15 +6,18 @@ import configparser
 from discord.ext import commands
 
 CONFIG = configparser.ConfigParser()
-CONFIG.read("./config.ini")
+CONFIG.read("../config.ini")
 
 TOKEN = CONFIG.get("Discord", "Token")
 PREFIX = CONFIG.get("Bot", "Prefix")
 
 BOT = commands.Bot(command_prefix=PREFIX)
+BOT.remove_command(
+    "help"
+)  # removes the default help command, allowing for a replacement.
 
 # add your module name here once completed
-MODULES = []
+MODULES = ["help"]
 
 
 def main():
