@@ -1,5 +1,5 @@
 """
-_﻿java﻿_"Mainly a help command that replaces the default command that discord.py provides.
+"Mainly a help command that replaces the default command that discord.py provides.
 This module also contains related commands and functions such as about, contrib, docs.
 """
 import configparser
