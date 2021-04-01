@@ -73,10 +73,9 @@ def cog_values(bot):
                 "aliases": cmd.aliases,
             }
 
-    misc_commands = {"misc_commands": misc_cmd_dict}
-    all_commands = {"all_commands": all_cmds}
-    cog_dict.update(misc_commands)
-    cog_dict.update(all_commands)
+    misc_dicts = {"misc_commands": misc_cmd_dict, "all_commands": all_cmds}
+    cog_dict.update(misc_dicts)
+
     return cog_dict
 
 
@@ -88,27 +87,25 @@ def misc_command_str(cog_dict):
     return uncategorized_commands[:-3]
 
 
-def description_string_builder(prefix, cog_dict, argument):
+def description_string_builder(prefix, parsable_json, disabled_commands):
     """Builds the description command string for the discord embed description."""
-    parsable_json = find_ci(cog_dict, argument)
 
     description_string = ""
     for item in parsable_json["commands"]:  # builds the embed description
         doc_item = parsable_json["commands"][item]
-        if doc_item["name"] in cog_dict["disabled_commands"]:
-            pass
-        else:
-            alias_string = ""
-            for alias in doc_item["aliases"]:
-                alias_string += f"`{alias}`, " if alias else None
-            alias_string = alias_string[:-2]
-            dash = ", " if alias_string else ""
-            usage = doc_item["usage"] if doc_item["usage"] else None
-            description_string += (
-                f"`{item}`{dash}{alias_string}:\n"
-                f'{doc_item["doc_string"]}\n'
-                f"```{prefix}{item} {usage}```\n\n"
-            )
+        if doc_item["name"] in disabled_commands:
+            continue
+        alias_string = ""
+        for alias in doc_item["aliases"]:
+            alias_string += f"`{alias}`, " if alias else None
+        alias_string = alias_string[:-2]
+        dash = ", " if alias_string else ""
+        usage = doc_item["usage"] if doc_item["usage"] else None
+        description_string += (
+            f"`{item}`{dash}{alias_string}:\n"
+            f'{doc_item["doc_string"]}\n'
+            f"```{prefix}{item} {usage}```\n\n"
+        )
     return description_string
 
 
@@ -116,7 +113,7 @@ class Help(commands.Cog):
     """Defines everything related towards the help command."""
 
     def __init__(self, bot):
-        self.embed_color = discord.Color(0x2F3136)
+        self.embed_color = discord.Color(0x2f3136)
         self.bot = bot
         self.config = configparser.ConfigParser()
         self.config.read("../config.ini")
@@ -153,9 +150,6 @@ class Help(commands.Cog):
 
         cog_dict = cog_values(self.bot)
 
-        arg_in_misc = find_ci(cog_dict["misc_commands"], argument)
-        arg_in_dict = find_ci(cog_dict["all_commands"], argument)
-
         if not args:  # builds the embed if no arguments where provided
             embed = discord.Embed(
                 title="Commands and modules",
@@ -184,16 +178,21 @@ class Help(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        if find_ci(cog_dict, argument):
-
+        find_ci_res = find_ci(cog_dict, argument)
+        if find_ci_res:
             embed = discord.Embed(
                 title=f"{argument.capitalize()} Module:",
-                description=description_string_builder(self.prefix, cog_dict, argument),
+                description=description_string_builder(
+                    self.prefix, find_ci_res, cog_dict["disabled_commands"]
+                ),
                 color=self.embed_color,
             )
 
             await ctx.send(embed=embed)
             return
+
+        arg_in_misc = find_ci(cog_dict["misc_commands"], argument)
+        arg_in_dict = find_ci(cog_dict["all_commands"], argument)
 
         if arg_in_dict or arg_in_misc:
 
