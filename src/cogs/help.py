@@ -1,5 +1,5 @@
 """
-Mainly a help command that replaces the default command that discord.py provides.
+_﻿java﻿_"Mainly a help command that replaces the default command that discord.py provides.
 This module also contains related commands and functions such as about, contrib, docs.
 """
 import configparser
@@ -20,7 +20,7 @@ def find_ci(dictionary, string):
     return None
 
 
-def cog_values(self):
+def cog_values(bot):
     """Returns json for all cogs, commands and their related info."""
     disabled_cmds = []
     enabled_cmds = []
@@ -28,10 +28,11 @@ def cog_values(self):
     misc_cmd_dict = {}
     all_cmds = {}
 
-    for cog in self.bot.cogs:
+    for cog in bot.cogs:
         current_cog_disabled_cmds = []
         cmd_dict = {}
-        for cmd in self.bot.get_cog(cog).get_commands():
+
+        for cmd in bot.get_cog(cog).get_commands():
             cmd_info = {
                 "name": cmd.name,
                 "usage": cmd.usage,
@@ -50,7 +51,7 @@ def cog_values(self):
             else:
                 enabled_cmds.append(cmd.name)
 
-        cmd_count = len(self.bot.get_cog(cog).get_commands()) - len(
+        cmd_count = len(bot.get_cog(cog).get_commands()) - len(
             current_cog_disabled_cmds
         )
 
@@ -63,7 +64,7 @@ def cog_values(self):
         cog_dict["disabled_commands"] = disabled_cmds
         cog_dict["enabled_commands"] = enabled_cmds
 
-    for cmd in self.bot.walk_commands():
+    for cmd in bot.walk_commands():
         if not cmd.name in cmd_dict.keys():
             misc_cmd_dict[cmd.name] = {
                 "name": cmd.name,
@@ -76,7 +77,6 @@ def cog_values(self):
     all_commands = {"all_commands": all_cmds}
     cog_dict.update(misc_commands)
     cog_dict.update(all_commands)
-
     return cog_dict
 
 
@@ -103,7 +103,6 @@ def description_string_builder(prefix, cog_dict, argument):
                 alias_string += f"`{alias}`, " if alias else None
             alias_string = alias_string[:-2]
             dash = ", " if alias_string else ""
-            usage = ""
             usage = doc_item["usage"] if doc_item["usage"] else None
             description_string += (
                 f"`{item}`{dash}{alias_string}:\n"
@@ -142,7 +141,7 @@ class Help(commands.Cog):
     @commands.command(name="dump_help_json", enabled=False)
     async def dump_help_json(self, ctx):
         """Dumps all help data into a parsable json format. Useful for debugging."""
-        cog_dict = cog_values(self)
+        cog_dict = cog_values(self.bot)
         await ctx.send("```json\n{}```".format(cog_dict))
 
     # replaces the default help command
@@ -152,7 +151,7 @@ class Help(commands.Cog):
 
         argument = " ".join(args).lower().strip()
 
-        cog_dict = cog_values(self)
+        cog_dict = cog_values(self.bot)
 
         arg_in_misc = find_ci(cog_dict["misc_commands"], argument)
         arg_in_dict = find_ci(cog_dict["all_commands"], argument)
@@ -183,7 +182,9 @@ class Help(commands.Cog):
                 )
 
             await ctx.send(embed=embed)
-        elif find_ci(cog_dict, argument):
+            return
+
+        if find_ci(cog_dict, argument):
 
             embed = discord.Embed(
                 title=f"{argument.capitalize()} Module:",
@@ -192,13 +193,11 @@ class Help(commands.Cog):
             )
 
             await ctx.send(embed=embed)
+            return
 
-        elif arg_in_dict or arg_in_misc:
+        if arg_in_dict or arg_in_misc:
 
-            if arg_in_dict:
-                parsable_json = find_ci(cog_dict["all_commands"], argument)
-            if arg_in_misc:
-                parsable_json = find_ci(cog_dict["misc_commands"], argument)
+            parsable_json = arg_in_dict if arg_in_dict else arg_in_misc
 
             usage = "" if not parsable_json["usage"] else parsable_json["usage"]
             doc_string = (
@@ -218,14 +217,15 @@ class Help(commands.Cog):
             )
 
             await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="404: Command or Module Not Found.",
-                description=f"See: `{self.prefix}help`",
-                color=self.embed_color,
-            )
+            return
 
-            await ctx.send(embed=embed)
+        embed = discord.Embed(
+            title="404: Command or Module Not Found.",
+            description=f"See: `{self.prefix}help`",
+            color=self.embed_color,
+        )
+
+        await ctx.send(embed=embed)
 
 
 # This function is called by the load_extension method on the bot.
