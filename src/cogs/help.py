@@ -24,7 +24,7 @@ def misc_command_str(cmds):
     """Builds the uncategorized command string for the discord embed description."""
     uncategorized_commands = ""
     for cmd in cmds:
-        uncategorized_commands += f"`{cmd}`, \n"
+        uncategorized_commands += f"`{cmd.name}`, \n"
     return uncategorized_commands[:-3]
 
 
@@ -41,9 +41,9 @@ def description_string_builder(prefix, cog):
             alias_string += f"`{alias}`, " if alias else None
         alias_string = alias_string[:-2]
         dash = ", " if alias_string else ""
-        usage = cmd.usage if cmd.usage else ""
+        usage = cmd.usage if cmd.usage else None
         description_string += (
-            f"`{cmd}`{dash}{alias_string}:\n"
+            f"`{cmd.name}`{dash}{alias_string}:\n"
             f"{doc_item}\n"
             f"```{prefix}{cmd} {usage}```\n\n"
         )
@@ -93,11 +93,12 @@ class Information(commands.Cog):
                 color=self.embed_color,
             )
 
-            for cog in self.bot.cogs:
+            for cog in self.bot.cogs.values():
+                enabled_cmds = [cmd for cmd in cog.walk_commands() if cmd.enabled]
                 with suppress(Exception):  # forced to use this because pylint
                     embed.add_field(
-                        name=cog,
-                        value="`N commands`",
+                        name=cog.qualified_name,
+                        value=f"`{len(enabled_cmds)} commands`",
                         inline=True,
                     )
 
@@ -141,7 +142,7 @@ class Information(commands.Cog):
                 description=(
                     f"{doc_string}\n"
                     f"**Example Usage:**\n"
-                    f"```{self.prefix}{matching_cmd.name} {matching_cmd.usage}```"
+                    f"```{self.prefix}{matching_cmd.name} {matching_cmd.usage if matching_cmd.usage else ''}```"
                 ),
                 color=self.embed_color,
             )
