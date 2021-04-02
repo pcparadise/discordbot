@@ -45,7 +45,7 @@ def description_string_builder(prefix, cog):
         description_string += (
             f"`{cmd.name}`{dash}{alias_string}:\n"
             f"{doc_item}\n"
-            f"```{prefix}{cmd} {usage}```\n\n"
+            f"```{prefix}{cmd.name} {usage}```\n\n"
         )
     return description_string
 
