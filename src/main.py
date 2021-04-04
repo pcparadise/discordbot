@@ -11,7 +11,7 @@ from shared_state import SharedState
 
 
 # add your module name here once completed
-MODULES = ["help"]
+MODULES = ["help", "raids"]
 
 
 def main():
