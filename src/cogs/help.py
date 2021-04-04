@@ -137,7 +137,7 @@ class Information(commands.Cog):
                 "undefined doc_string" if not matching_cmd.help else matching_cmd.help
             )
 
-            usage = matching_cmd.usage if matching_cmd.usage else ''
+            usage = matching_cmd.usage if matching_cmd.usage else ""
             embed = discord.Embed(
                 title=f"{matching_cmd.name} command:",
                 description=(
