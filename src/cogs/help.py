@@ -137,12 +137,13 @@ class Information(commands.Cog):
                 "undefined doc_string" if not matching_cmd.help else matching_cmd.help
             )
 
+            usage = matching_cmd.usage if matching_cmd.usage else ''
             embed = discord.Embed(
                 title=f"{matching_cmd.name} command:",
                 description=(
                     f"{doc_string}\n"
                     f"**Example Usage:**\n"
-                    f"```{self.prefix}{matching_cmd.name} {matching_cmd.usage if matching_cmd.usage else ''}```"
+                    f"```{self.prefix}{matching_cmd.name} {usage}```"
                 ),
                 color=self.embed_color,
             )
