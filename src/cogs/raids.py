@@ -3,6 +3,7 @@ Modules for how PCParadise handles raids.
 """
 import configparser
 import asyncio
+import discord
 
 from discord.ext import commands
 
@@ -62,7 +63,15 @@ class RaidHandler(commands.Cog):
                 self.members_joined_during_raid.add(joined_member)
                 for raiding_member in self.members_joined_during_raid:
                     if self.in_raid:
-                        await member.guild.ban(raiding_member)
+                        try:
+                            await member.guild.ban(raiding_member)
+                        except discord.Forbidden:
+                            await self.alert_mods(
+                                "Looks like I don't have the permission to ban!"
+                            )
+                        except discord.HTTPException:
+                            # They've probably already been banned the previous run.
+                            pass
                         self.members_joined_during_raid.remove(raiding_member)
 
         await asyncio.sleep(5)
