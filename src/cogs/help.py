@@ -54,7 +54,19 @@ class Information(commands.Cog):
     """Defines everything related towards the help command."""
 
     def __init__(self, bot, config):
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
         self.embed_color = discord.Color(0x2F3136)
+=======
+        self.embed_color = discord.Color(0x2f3136)
+>>>>>>> 03bf4a8 (Create SharedState object)
+=======
+        self.embed_color = discord.Color(0x2F3136)
+>>>>>>> 18e8fd5 (Run through black formatter - Fix #10)
+=======
+        self.embed_color = discord.Color(0x2F3136)
+>>>>>>> 304b56b (Run through black formatter)
         self.bot = bot
         self.config = config
         self.prefix = config.prefix
