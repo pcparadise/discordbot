@@ -34,13 +34,13 @@ def description_string_builder(prefix, cog):
     for cmd in cog.walk_commands():  # builds the embed description
         if not cmd.enabled:
             continue
-        doc_item = cmd.description
+        doc_item = cmd.help
         alias_string = ""
         for alias in cmd.aliases:
             alias_string += f"`{alias}`, " if alias else None
         alias_string = alias_string[:-2]
         dash = ", " if alias_string else ""
-        usage = cmd.usage if cmd.usage else None
+        usage = cmd.usage if cmd.usage else ""
         description_string += (
             f"`{cmd.name}`{dash}{alias_string}:\n"
             f"{doc_item}\n"
