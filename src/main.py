@@ -2,16 +2,13 @@
 The entry point for the discord bot. You can add modules by adding them
 to the MODULES variable.
 """
-import configparser
+import importlib
 from discord.ext import commands
+from shared_state import SharedState
 
-CONFIG = configparser.ConfigParser()
-CONFIG.read("../config.ini")
+CONFIG = SharedState("../config.ini")
 
-TOKEN = CONFIG.get("Discord", "Token")
-PREFIX = CONFIG.get("Bot", "Prefix")
-
-BOT = commands.Bot(command_prefix=PREFIX)
+BOT = commands.Bot(command_prefix=CONFIG.prefix)
 BOT.remove_command(
     "help"
 )  # removes the default help command, allowing for a replacement.
@@ -25,10 +22,17 @@ def main():
     The first function that runs.
     """
     print("Bot is starting...")
-    for module in MODULES:
-        BOT.load_extension(f"cogs.{module}")
-        print(f"cogs.{module} loaded")
-    BOT.run(TOKEN)
+    load_modules()
+    BOT.run(CONFIG.token)
+
+
+def load_modules():
+    """
+    Imports all modules in a given list.
+    Passes through bot and config to the setup function.
+    """
+    for item in MODULES:
+        importlib.import_module("cogs." + item).setup(BOT, CONFIG)
 
 
 main()

@@ -2,7 +2,6 @@
 Mainly a help command that replaces the default command that discord.py provides.
 This module also contains related commands and functions such as about, contrib, docs.
 """
-import configparser
 from contextlib import suppress
 
 import discord
@@ -53,12 +52,11 @@ def description_string_builder(prefix, cog):
 class Information(commands.Cog):
     """Defines everything related towards the help command."""
 
-    def __init__(self, bot):
+    def __init__(self, bot, config):
         self.embed_color = discord.Color(0x2F3136)
         self.bot = bot
-        self.config = configparser.ConfigParser()
-        self.config.read("../config.ini")
-        self.prefix = self.config.get("Bot", "Prefix")
+        self.config = config
+        self.prefix = config.prefix
 
     @commands.command(name="contrib")
     async def send_contribution_info(self, ctx):
@@ -161,6 +159,6 @@ class Information(commands.Cog):
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot):
+def setup(bot, config):
     """Sets up the extension for the bot"""
-    bot.add_cog(Information(bot))
+    bot.add_cog(Information(bot, config))
