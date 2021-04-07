@@ -3,11 +3,13 @@ The entry point for the discord bot. You can add modules by adding them
 to the MODULES variable.
 """
 import importlib
-import pathlib
 import os
-import appdirs
+import pathlib
+import sys
 
+import appdirs
 from discord.ext import commands
+
 from shared_state import SharedState
 
 
@@ -50,7 +52,8 @@ def main():
             "No config.ini was found\n"
             "valid config paths include the bot folder "
             "or the OS conventions your OS follows for configs "
-            "(for example .config/ or $XDG_CONFIG_PATH on linux)"
+            "(for example .config/ or $XDG_CONFIG_PATH on linux)",
+            file=sys.stderr,
         )
         return
     config = SharedState(conf_path)
