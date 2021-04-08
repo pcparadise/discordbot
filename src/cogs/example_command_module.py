@@ -10,13 +10,14 @@ class ExampleCommandModule(commands.Cog):
     This one uses commands unlike the one in example_event_module
     """
 
-    def __init__(self, bot):
+    def __init__(self, bot, config):
         self.bot = bot
+        self.config = config
 
     # Discord.py is an asynchronous discord framework.
     # It makes heavy use of a python feature called "decorators."
     # I reccomend looking into both async/await and decorators to
-    # learn more abuot what's going on here.
+    # learn more about what's going on here.
     @commands.command(name="ping", aliases=["pong", "poong"])
     async def measure_ping(self, ctx):
         """
@@ -26,9 +27,9 @@ class ExampleCommandModule(commands.Cog):
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot):
+def setup(bot, config):
     """
     Function called by load_extension method on the bot.
     This is used to setup a discord module.
     """
-    bot.add_cog(ExampleCommandModule(bot))
+    bot.add_cog(ExampleCommandModule(bot, config))
