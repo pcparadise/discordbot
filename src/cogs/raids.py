@@ -38,50 +38,55 @@ class RaidHandler(commands.Cog):
         Register new user and check if we're having a raid, using joins / time_period
         """
         self.new_joins.add(member)
-        self.in_raid = False if len(self.new_joins) <= 5 else self.in_raid
 
-        if len(self.new_joins) >= 5:
+        # If less then 5 people have joined in 5 seconds
+        # we're not in a raid, add them to the new_joins, wait for 5 seconds
+        # then remove them. we're done.
+        if len(self.new_joins) <= 5:
+            self.in_raid = False  # There's no way this could be a raid.
+            await asyncio.sleep(5)
+            self.new_joins.remove(member.id)
+            return
+
+        # more then 5 people have joined in 5 seconds, we're probably in a raid.
+        if not self.in_raid:
+            await self.alert_mods(
+                "A RAID HAS BEEN DETECTED. PLEASE RESPOND Y TO START BANNING"
+            )
+            alert_channel = await self.alert_channel
+            msg = await self.bot.wait_for(
+                "message", lambda m: m.channel == alert_channel
+            )
+            self.in_raid = msg.content.lower().contains("y")
             if not self.in_raid:
-                await self.alert_mods(
-                    "A RAID HAS BEEN DETECTED. PLEASE RESPOND Y TO START BANNING"
-                )
-                alert_channel = await self.alert_channel
-                msg = await self.bot.wait_for(
-                    "message", lambda m: m.channel == alert_channel
-                )
-                self.in_raid = msg.content.lower().contains("y")
-                if not self.in_raid:
-                    # Apparently wasn't a raid, empty both sets.
-                    self.members_joined_during_raid = set({})
-                    self.new_joins = set({})
+                # Apparently wasn't a raid, empty both sets.
+                self.members_joined_during_raid = set({})
+                self.new_joins = set({})
 
-            for joined_member in self.new_joins:
-                # we don't have to worry about duplicate members in
-                # members_joined_during_raid because it's a set, not a list.
-                self.members_joined_during_raid.add(joined_member)
-                for raiding_member in self.members_joined_during_raid:
-                    if self.in_raid:
-                        try:
-                            # await member.guild.ban(raiding_member)
-                            print(
-                                "Would of banned"
-                                + raiding_member.name
-                                + " "
-                                + raiding_member.nick
-                            )
-                        except discord.Forbidden:
-                            await self.alert_mods(
-                                "Looks like I don't have the permission to ban!"
-                            )
-                        except discord.HTTPException:
-                            # They've probably already been banned the previous run.
-                            pass
-                        self.members_joined_during_raid.remove(raiding_member)
-
-        await asyncio.sleep(5)
-        self.new_joins.remove(member.id)
-
-        print(f'"{self.bot.user}" is ready.')
+        for joined_member in self.new_joins:
+            # we don't have to worry about duplicate members in
+            # members_joined_during_raid because it's a set, not a list.
+            self.members_joined_during_raid.add(joined_member)
+            # if we aren't in a raid, we aren't going to ban anyone.
+            if not self.in_raid:
+                continue
+            for raiding_member in self.members_joined_during_raid:
+                try:
+                    # await member.guild.ban(raiding_member)
+                    print(
+                        "Would of banned"
+                        + raiding_member.name
+                        + " "
+                        + raiding_member.nick
+                    )
+                except discord.Forbidden:
+                    await self.alert_mods(
+                        "Looks like I don't have the permission to ban!"
+                    )
+                except discord.HTTPException:
+                    # They've probably already been banned somehow.
+                    pass
+                self.members_joined_during_raid.remove(raiding_member)
 
     async def alert_mods(self, msg):
         """
