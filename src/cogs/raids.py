@@ -45,8 +45,9 @@ class RaidHandler(commands.Cog):
                 await self.alert_mods(
                     "A RAID HAS BEEN DETECTED. PLEASE RESPOND Y TO BAN AND N TO IGNORE"
                 )
+                alert_channel = await self.alert_channel
                 msg = await self.bot.wait_for(
-                    "message", lambda m: m.channel == await self.alert_channel
+                    "message", lambda m: m.channel == alert_channel
                 )
                 self.in_raid = msg.content.lower().contains("y")
                 if not self.in_raid:
