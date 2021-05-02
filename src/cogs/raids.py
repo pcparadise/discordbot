@@ -62,7 +62,13 @@ class RaidHandler(commands.Cog):
                 for raiding_member in self.members_joined_during_raid:
                     if self.in_raid:
                         try:
-                            await member.guild.ban(raiding_member)
+                            # await member.guild.ban(raiding_member)
+                            print(
+                                "Would of banned"
+                                + raiding_member.name
+                                + " "
+                                + raiding_member.nick
+                            )
                         except discord.Forbidden:
                             await self.alert_mods(
                                 "Looks like I don't have the permission to ban!"
