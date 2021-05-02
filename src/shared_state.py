@@ -69,3 +69,4 @@ class SharedState:  # pylint: disable=too-few-public-methods
         """Initializes all variables within the SharedState object"""
         self.prefix = config["prefix"]
         self.token = config["token"]
+        self.mod_alert_channel = config["mod_alert_channel"]

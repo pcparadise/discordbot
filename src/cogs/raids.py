@@ -1,7 +1,6 @@
 """
 Modules for how PCParadise handles raids.
 """
-import configparser
 import asyncio
 import discord
 
@@ -19,14 +18,11 @@ class RaidHandler(commands.Cog):
         # they're unordered and unindexable though. But we don't need those properties.
         self.new_joins = set({})
         self.members_joined_during_raid = set({})
-        config = configparser.ConfigParser()
-        config.read("../config.ini")
-        mod_alert_channel_id = config.get("SERVER", "mod_alerts")
+        mod_alert_channel_id = config.mod_alert_channel
         # NOTE: WE MUST ALWAYS AWAIT THIS VARIABLE.
         # WE CAN NOT HAVE AWAIT IN NON ASYNC METHODS, SO AWAIT THIS!
         self.alert_channel = bot.fetch_channel(mod_alert_channel_id)
         self.in_raid = False
-        self.config = config
 
     # I apologize for anyone reading this monstrosity.
     # Allow me to walk you through the thought process I guess.
