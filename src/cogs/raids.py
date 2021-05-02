@@ -43,7 +43,7 @@ class RaidHandler(commands.Cog):
         if len(self.new_joins) >= 5:
             if not self.in_raid:
                 await self.alert_mods(
-                    "A RAID HAS BEEN DETECTED. PLEASE RESPOND Y TO BAN AND N TO IGNORE"
+                    "A RAID HAS BEEN DETECTED. PLEASE RESPOND Y TO START BANNING"
                 )
                 alert_channel = await self.alert_channel
                 msg = await self.bot.wait_for(
