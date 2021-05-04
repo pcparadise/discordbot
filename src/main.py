@@ -18,9 +18,7 @@ from discord.ext import commands
 EXTENSIONS = ["cogs.help"]
 
 # Define API Intents that we want to subscribe to
-intents = discord.Intents.default()
-intents.members = True
-intents.presences = True
+intents = discord.Intents.all()
 
 
 class PCParadiseBot(commands.Bot):
@@ -30,7 +28,6 @@ class PCParadiseBot(commands.Bot):
     """
 
     def __init__(self):
-        self.app_info = None
         self.config = PCParadiseBot.initialize_config()
         self.launch_time = datetime.utcnow()
         self.default_activity = discord.Activity(
@@ -111,7 +108,8 @@ class PCParadiseBot(commands.Bot):
 
     def bot_startup(self):
         """
-        Method that facilitates loading of all the bot's cogs and any other preliminary setup.
+        Blocking method that facilitates loading of all the
+        bot's cogs along with any other preliminary setup.
         """
         print("Loading cogs...")
         for extension in EXTENSIONS:
@@ -138,8 +136,6 @@ class PCParadiseBot(commands.Bot):
         """
         Perform a few tasks when the bot is ready to accept commands.
         """
-        self.app_info = await self.application_info()
-
         print(" - ")
         print("Client is ready")
         print(
