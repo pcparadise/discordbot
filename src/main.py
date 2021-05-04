@@ -131,8 +131,8 @@ class PCParadiseBot(commands.Bot):
             print("\nKeyboard Interrupt Detected")
             self.loop.run_until_complete(self.logout())
         finally:
-            print("Closing bot process...")
             self.loop.run_until_complete(self.logout())
+            print("\nConnection Closed")
 
     async def on_ready(self):
         """
@@ -157,6 +157,13 @@ class PCParadiseBot(commands.Bot):
         await self.change_presence(
             status=discord.Status.online, activity=self.default_activity
         )
+
+    async def on_disconnect(self):
+        """
+        Method that gets called whenever the client has disconnected from Discord
+        or a connection attempt to Discord has failed.
+        """
+        print("\nClient has disconnected")
 
 
 PCParadiseBot().run()
