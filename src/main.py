@@ -7,7 +7,7 @@ import sys
 
 from discord.ext import commands
 
-from shared_state import SharedState
+from .shared_state import SharedState
 
 
 # add your module name here once completed
@@ -48,4 +48,5 @@ def load_modules(bot, config):
         importlib.import_module("cogs." + item).setup(bot, config)
 
 
-main()
+if __name__ == "__main__":
+    main()
