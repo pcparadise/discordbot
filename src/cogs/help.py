@@ -104,7 +104,7 @@ class Information(commands.Cog):
             if misc_commands:
                 embed.add_field(
                     name="Uncategorized Commands:",
-                    value=misc_command_str(commands),
+                    value=misc_command_str(misc_commands),
                     inline=False,
                 )
 
