@@ -6,6 +6,7 @@ import configparser
 import os
 import pathlib
 import sys
+import traceback
 from datetime import datetime
 from typing import Union
 
@@ -117,7 +118,7 @@ class PCParadiseBot(commands.Bot):
                 self.load_extension(extension)
                 print(f"SUCCESS - {extension}")
             except commands.ExtensionNotFound:
-                print(f"FAILED - {extension}")
+                print(f"FAILED - {extension}", file=sys.stderr)
 
     def run(self):  # pylint: disable=W0221
         """
@@ -127,10 +128,15 @@ class PCParadiseBot(commands.Bot):
             self.loop.run_until_complete(self.start(self.config.get("token")))
         except KeyboardInterrupt:
             print("\nKeyboard Interrupt Detected")
-            self.loop.run_until_complete(self.logout())
-        finally:
-            self.loop.run_until_complete(self.logout())
-            print("\nConnection Closed")
+            self.loop.run_until_complete(self.close())
+            return
+        except Exception:  # pylint: disable=W0703
+            traceback.print_exc(file=sys.stderr)
+            return
+
+        # Perform a graceful shutdown
+        self.loop.run_until_complete(self.close())
+        print("\nConnection Closed")
 
     async def on_ready(self):
         """
