@@ -1,7 +1,6 @@
 """
 An example module for future contributors to reference using events.
 """
-
 from discord.ext import commands
 
 
@@ -11,14 +10,11 @@ class ExampleEventModule(commands.Cog):
     This one uses events unlike the one in example_command_module
     """
 
-    def __init__(self, bot, config):
+    def __init__(self, bot):
         self.bot = bot
-        self.config = config
 
-    # Another decorator, and an async function called whenever
-    # the discord bot is ready.
-    # I reccomend looking into async/await and decorators to learn
-    # more.
+    # Another decorator, and an async function called whenever the discord bot is ready.
+    # I recommend looking into async/await and decorators to learn more.
     @commands.Cog.listener()
     async def on_ready(self):
         """
@@ -28,9 +24,9 @@ class ExampleEventModule(commands.Cog):
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot, config):
+def setup(bot):
     """
     Function called by load_extension method on the bot.
     This is used to setup a discord module.
     """
-    bot.add_cog(ExampleEventModule(bot, config))
+    bot.add_cog(ExampleEventModule(bot))
