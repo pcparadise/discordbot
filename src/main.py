@@ -14,11 +14,9 @@ import appdirs
 import discord
 from discord.ext import commands
 
-
 # List of cogs the bot will load on startup
 # Names should follow the dot-path notation (similar to imports)
 EXTENSIONS = ["cogs.help"]
-
 
 # Define API Intents that we want to subscribe to
 intents = discord.Intents.all()
@@ -168,7 +166,6 @@ class PCParadiseBot(commands.Bot):
         or a connection attempt to Discord has failed.
         """
         print("\nClient has disconnected")
-
 
 
 if __name__ == "__main__":
