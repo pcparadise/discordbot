@@ -22,3 +22,7 @@ pylint = "2.7.4"
 
 [tool.poetry.scripts]
 run = "src.main:main"
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
