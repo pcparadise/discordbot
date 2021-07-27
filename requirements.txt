@@ -1,2 +1,2 @@
-discord.py==1.5
+discord.py==1.7
 appdirs==1.4
