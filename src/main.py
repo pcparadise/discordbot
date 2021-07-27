@@ -167,6 +167,8 @@ class PCParadiseBot(commands.Bot):
         """
         print("\nClient has disconnected")
 
+def main():
+    PCParadiseBot().run()
 
 if __name__ == "__main__":
-    PCParadiseBot().run()
+    main()
