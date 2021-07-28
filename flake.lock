@@ -1,5 +1,17 @@
 {
   "nodes": {
+    "config-ini": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-qwu58E02jaMK3ONnGr0+5bk8oV7RgLmU/1/7+nND46M=",
+        "path": "config.ini",
+        "type": "path"
+      },
+      "original": {
+        "path": "config.ini",
+        "type": "path"
+      }
+    },
     "flake-utils": {
       "locked": {
         "lastModified": 1623875721,
@@ -81,6 +93,7 @@
     },
     "root": {
       "inputs": {
+        "config-ini": "config-ini",
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "poetry2nix-src": "poetry2nix-src"
