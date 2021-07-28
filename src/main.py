@@ -16,7 +16,7 @@ from discord.ext import commands
 
 # List of cogs the bot will load on startup
 # Names should follow the dot-path notation (similar to imports)
-EXTENSIONS = ["cogs.help"]
+EXTENSIONS = ["src.cogs.help"]
 
 # Define API Intents that we want to subscribe to
 intents = discord.Intents.all()
@@ -78,7 +78,7 @@ class PCParadiseBot(commands.Bot):
         return None
 
     @staticmethod
-    def initialize_config() -> dict:
+    def initialize_config() -> dict[str, str]:
         """
         Loads the config, parses it, ignores sections, and returns it as a dictionary.
         """
@@ -167,8 +167,13 @@ class PCParadiseBot(commands.Bot):
         """
         print("\nClient has disconnected")
 
+
 def main():
+    """
+    Entry point for poetry.
+    """
     PCParadiseBot().run()
+
 
 if __name__ == "__main__":
     main()
