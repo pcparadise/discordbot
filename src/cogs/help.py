@@ -21,7 +21,7 @@ def flatten(nested_iterable: Iterable[Iterable[T]]) -> list[T]:
 
 def count(iterable: Iterable) -> int:
     """count the amount of items in an iterator"""
-    return sum(1 for i in iterable)
+    return sum(1 for _ in iterable)
 
 
 def command_usage(command: commands.Command) -> str:
