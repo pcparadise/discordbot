@@ -9,10 +9,12 @@ import discord
 from discord.ext import commands
 from fuzzywuzzy import fuzz
 
-ITEM = TypeVar("T")
+# pylint: disable=invalid-name
+T = TypeVar("T")
+# pylint: disable=invalid-name
 
 
-def flatten(nested_iterable: Iterable[Iterable[ITEM]]) -> list[ITEM]:
+def flatten(nested_iterable: Iterable[Iterable[T]]) -> list[T]:
     """Turns a set of listed iterables to an unested list of T"""
     return [item for iterable in nested_iterable for item in iterable]
 

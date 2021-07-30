@@ -1,12 +1,13 @@
 """Module defining the cog \"About\""""
 import discord
 from discord.ext import commands
+from src.main import PCParadiseBot
 
 
 class About(commands.Cog):
     """Gives information about the bot"""
 
-    def __init__(self, bot: commands.bot.Bot):
+    def __init__(self, bot: PCParadiseBot):
         self.embed_color = discord.Color(0x2F3136)
         self.bot = bot
         self.prefix = self.bot.config.get("prefix")
@@ -28,6 +29,6 @@ class About(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: commands.bot.Bot):
+def setup(bot: PCParadiseBot):
     """Setup the About cog."""
     bot.add_cog(About(bot))
