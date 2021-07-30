@@ -9,6 +9,8 @@ import discord
 from discord.ext import commands
 from fuzzywuzzy import fuzz
 
+from src.main import PCParadiseBot
+
 # pylint: disable=invalid-name
 T = TypeVar("T")
 # pylint: disable=invalid-name
@@ -119,6 +121,6 @@ class CustomHelp(commands.HelpCommand):
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot):
+def setup(bot: PCParadiseBot):
     """Sets up the help command"""
     bot.help_command = CustomHelp()
