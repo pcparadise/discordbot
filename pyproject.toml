@@ -16,6 +16,7 @@ packages = [
 appdirs = "^1.4"
 python = "^3.9"
 fuzzywuzzy = "^0.18"
+python-Levenshtein = "^0.12"
 
 [tool.poetry.dev-dependencies]
 black = "20.8b1"
