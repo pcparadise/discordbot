@@ -4,9 +4,11 @@ This module also contains related commands and functions such as about, contrib,
 """
 from typing import Mapping, Optional
 from collections.abc import Iterator
+from functools import reduce
 
 import discord
 from discord.ext import commands
+from fuzzywuzzy import fuzz
 
 
 def count(iterable: Iterator) -> int:
@@ -76,6 +78,27 @@ class CustomHelp(commands.HelpCommand):
         out = discord.Embed(title=command_usage(cmd), description=cmd.help)
         return out
 
+    def command_not_found(self, string: str) -> str:
+        attempted_command = string.split()[0]
+        mapping = self.get_bot_mapping()
+        all_commands: list[list[commands.Command]] = [
+            cmds for cog, cmds in mapping.items()
+        ]
+
+        def returning_extend(list1, list2):
+            list1.extend(list2)
+            return list1
+
+        all_commands = reduce(returning_extend, all_commands, [])
+        most_likely_commands = sorted(
+            all_commands,
+            key=lambda command: -fuzz.ratio(command.name, attempted_command),
+        )
+        new_line = "\n"
+        return (
+            f"{attempted_command} not found. Perhaps you meant one of the following:\n"
+            f"{new_line.join([command.name for command in most_likely_commands[:3]])}"
+        )
 
     async def send_command_help(self, command: commands.Command):
         """Sends the command help message"""
@@ -93,6 +116,7 @@ class CustomHelp(commands.HelpCommand):
         """Sends the bot help message"""
         dest = self.get_destination()
         await dest.send(embed=self.get_bot_help(mapping))
+
 
 # This function is called by the load_extension method on the bot.
 def setup(bot):
