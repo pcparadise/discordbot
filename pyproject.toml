@@ -15,6 +15,7 @@ packages = [
 'discord.py' = "^1.7"
 appdirs = "^1.4"
 python = "^3.9"
+fuzzywuzzy = "^0.18"
 
 [tool.poetry.dev-dependencies]
 black = "20.8b1"
