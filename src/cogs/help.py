@@ -86,11 +86,8 @@ class CustomHelp(commands.HelpCommand):
     def command_not_found(self, string: str) -> str:
         attempted_command = string.split()[0]
         mapping = self.get_bot_mapping()
-        all_commands_unflattened: list[list[commands.Command]] = [
-            cmds for _, cmds in mapping.items()
-        ]
+        all_commands = flatten(cmds for _, cmds in mapping.items())
 
-        all_commands: list[commands.Command] = flatten(all_commands_unflattened)
         most_likely_commands = sorted(
             all_commands,
             key=lambda command: -fuzz.ratio(command.name, attempted_command),
