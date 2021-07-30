@@ -36,7 +36,6 @@ class CustomHelp(commands.HelpCommand):
         freestanding_commands = []
         for cog, cmds in mapping.items():
             if cog is None:
-                print(cmds)
                 freestanding_commands.extend(cmds)
                 continue
             out.add_field(
