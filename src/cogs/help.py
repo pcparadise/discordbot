@@ -2,16 +2,22 @@
 Mainly a help command that replaces the default command that discord.py provides.
 This module also contains related commands and functions such as about, contrib, docs.
 """
-from typing import Mapping, Optional
-from collections.abc import Iterator
-from functools import reduce
+from typing import Mapping, Optional, TypeVar
+from collections.abc import Iterable
 
 import discord
 from discord.ext import commands
 from fuzzywuzzy import fuzz
 
+ITEM = TypeVar("T")
 
-def count(iterable: Iterator) -> int:
+
+def flatten(nested_iterable: Iterable[Iterable[ITEM]]) -> list[ITEM]:
+    """Turns a set of listed iterables to an unested list of T"""
+    return [item for iterable in nested_iterable for item in iterable]
+
+
+def count(iterable: Iterable) -> int:
     """count the amount of items in an iterator"""
     return sum(1 for i in iterable)
 
@@ -80,15 +86,11 @@ class CustomHelp(commands.HelpCommand):
     def command_not_found(self, string: str) -> str:
         attempted_command = string.split()[0]
         mapping = self.get_bot_mapping()
-        all_commands: list[list[commands.Command]] = [
-            cmds for cog, cmds in mapping.items()
+        all_commands_unflattened: list[list[commands.Command]] = [
+            cmds for _, cmds in mapping.items()
         ]
 
-        def returning_extend(list1, list2):
-            list1.extend(list2)
-            return list1
-
-        all_commands = reduce(returning_extend, all_commands, [])
+        all_commands: list[commands.Command] = flatten(all_commands_unflattened)
         most_likely_commands = sorted(
             all_commands,
             key=lambda command: -fuzz.ratio(command.name, attempted_command),
