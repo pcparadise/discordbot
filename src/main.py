@@ -16,10 +16,10 @@ from discord.ext import commands
 
 # List of cogs the bot will load on startup
 # Names should follow the dot-path notation (similar to imports)
-EXTENSIONS = ["src.cogs.help"]
+EXTENSIONS = ["src.cogs.help", "src.cogs.about"]
 
 # Define API Intents that we want to subscribe to
-intents = discord.Intents.all()
+intents = discord.Intents.default()
 
 
 class PCParadiseBot(commands.Bot):
@@ -39,9 +39,6 @@ class PCParadiseBot(commands.Bot):
         super().__init__(
             # Bot will respond to mention+cmd name and prefix+cmd name
             command_prefix=commands.when_mentioned_or(self.config.get("prefix")),
-            # Removes the default help command, in the future we can
-            # pass our HelpCommand sub-class to the constructor
-            help_command=None,
             intents=intents,
             # Enables reconnect logic for when bot loses internet connection
             # or due to an issue communicating with the API
