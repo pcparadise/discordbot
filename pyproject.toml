@@ -21,6 +21,7 @@ python-Levenshtein = "^0.12"
 [tool.poetry.dev-dependencies]
 black = "20.8b1"
 pylint = "2.7.4"
+mypy = "~0.910"
 
 [tool.poetry.scripts]
 run = "src.main:main"
