@@ -8,7 +8,7 @@ import pathlib
 import sys
 import traceback
 from datetime import datetime
-from typing import Union
+from typing import Union, Dict
 
 import appdirs
 import discord
@@ -75,7 +75,7 @@ class PCParadiseBot(commands.Bot):
         return None
 
     @staticmethod
-    def initialize_config() -> dict[str, str]:
+    def initialize_config() -> Dict[str, str]:
         """
         Loads the config, parses it, ignores sections, and returns it as a dictionary.
         """
