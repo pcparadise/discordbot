@@ -142,7 +142,7 @@ class PCParadiseBot(commands.Bot):
         print(" - ")
         print("Client is ready")
         print(
-            f"Logged in as {self.user.name}#{self.user.discriminator} (ID: {self.user.id})"
+            f"Logged in as {self.user} (ID: {self.user.id})"
         )
         print(f"Discord.py Version - {discord.__version__}")
         print(f"Prefix - {self.config.get('prefix')}")
