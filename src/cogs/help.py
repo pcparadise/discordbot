@@ -16,9 +16,9 @@ T = TypeVar("T")
 # pylint: disable=invalid-name
 
 
-def flatten(nested_iterable: Iterable[Iterable[T]]) -> List[T]:
+def flatten(nested_iterable: Iterable[Iterable[T]]) -> Iterable[T]:
     """Turns a set of listed iterables to an unested list of T"""
-    return [item for iterable in nested_iterable for item in iterable]
+    return (item for iterable in nested_iterable for item in iterable)
 
 
 def count(iterable: Iterable) -> int:
