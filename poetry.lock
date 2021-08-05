@@ -148,6 +148,17 @@ python-versions = "*"
 speedup = ["python-levenshtein (>=0.12)"]
 
 [[package]]
+name = "fuzzywuzzy-stubs"
+version = "0.0.1"
+description = "fuzzywuzzy stubs and mypy plugin"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+mypy = "*"
+
+[[package]]
 name = "idna"
 version = "3.2"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -307,7 +318,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "bb13abd07ebc7ea0abebabb5306815fb728e4ca3114e848319a353f738fa3337"
+content-hash = "0a2618764d569b5532dbdef47b8a43eaf18c791015d850b42d537a82dade23a9"
 
 [metadata.files]
 aiohttp = [
@@ -391,6 +402,10 @@ colorama = [
 fuzzywuzzy = [
     {file = "fuzzywuzzy-0.18.0-py2.py3-none-any.whl", hash = "sha256:928244b28db720d1e0ee7587acf660ea49d7e4c632569cad4f1cd7e68a5f0993"},
     {file = "fuzzywuzzy-0.18.0.tar.gz", hash = "sha256:45016e92264780e58972dca1b3d939ac864b78437422beecebb3095f8efd00e8"},
+]
+fuzzywuzzy-stubs = [
+    {file = "fuzzywuzzy-stubs-0.0.1.tar.gz", hash = "sha256:0c3cd21a4d5f3ead7219e36ec4bdf13187b78af66c58762a4b7579434b2608e0"},
+    {file = "fuzzywuzzy_stubs-0.0.1-py3-none-any.whl", hash = "sha256:d4965b64275c5f542ebec04a60279d7344de296d67e44e4fe5b85cbad629b150"},
 ]
 idna = [
     {file = "idna-3.2-py3-none-any.whl", hash = "sha256:14475042e284991034cb48e06f6851428fb14c4dc953acd9be9a5e95c7b6dd7a"},
