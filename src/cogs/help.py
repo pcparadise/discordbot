@@ -2,7 +2,7 @@
 Mainly a help command that replaces the default command that discord.py provides.
 This module also contains related commands and functions such as about, contrib, docs.
 """
-from typing import Mapping, Optional, TypeVar
+from typing import Mapping, Optional, TypeVar, List
 from collections.abc import Iterable
 
 import discord
@@ -16,7 +16,7 @@ T = TypeVar("T")
 # pylint: disable=invalid-name
 
 
-def flatten(nested_iterable: Iterable[Iterable[T]]) -> list[T]:
+def flatten(nested_iterable: Iterable[Iterable[T]]) -> List[T]:
     """Turns a set of listed iterables to an unested list of T"""
     return [item for iterable in nested_iterable for item in iterable]
 
@@ -37,7 +37,7 @@ class CustomHelp(commands.HelpCommand):
 
     @staticmethod
     def get_bot_help(
-        mapping: Mapping[Optional[commands.Cog], list[commands.Command]]
+        mapping: Mapping[Optional[commands.Cog], List[commands.Command]]
     ) -> discord.Embed:
         """Generates the embed for the bot help command."""
         out = discord.Embed(title="Help")
@@ -76,7 +76,7 @@ class CustomHelp(commands.HelpCommand):
                 continue
             out.add_field(
                 name=command_usage(cmd_or_group),
-                value=cmd_or_group.help,
+                value=(cmd_or_group.help if cmd_or_group.help else ""),
             )
 
         return out
@@ -113,7 +113,7 @@ class CustomHelp(commands.HelpCommand):
         await dest.send(embed=self.get_cog_help(cog))
 
     async def send_bot_help(
-        self, mapping: Mapping[Optional[commands.Cog], list[commands.Command]]
+        self, mapping: Mapping[Optional[commands.Cog], List[commands.Command]]
     ):
         """Sends the bot help message"""
         dest = self.get_destination()
