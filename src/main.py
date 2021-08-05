@@ -10,7 +10,10 @@ import traceback
 from datetime import datetime
 from typing import Union, Dict
 
-import appdirs
+# The type stubs for appdirs are fairly old.
+# The mantainer seems open to accepting a PR
+# but the original PR in 2019 seems to be inactive.
+import appdirs  # type: ignore
 import discord
 from discord.ext import commands
 
