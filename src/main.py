@@ -9,6 +9,7 @@ import sys
 import traceback
 from datetime import datetime
 from typing import Union, Dict
+import aiosqlite
 
 # The type stubs for appdirs are fairly old.
 # The mantainer seems open to accepting a PR
@@ -16,6 +17,8 @@ from typing import Union, Dict
 import appdirs  # type: ignore
 import discord
 from discord.ext import commands
+
+import migrations
 
 # List of cogs the bot will load on startup
 # Names should follow the dot-path notation (similar to imports)
@@ -33,6 +36,7 @@ class PCParadiseBot(commands.Bot):
 
     def __init__(self):
         self.config = PCParadiseBot.initialize_config()
+        self.db_path = pathlib.Path(__file__).parent.parent / "database.db"
         self.launch_time = datetime.utcnow()
         self.default_activity = discord.Activity(
             type=discord.ActivityType.listening, name=f"{self.config.get('prefix')}help"
@@ -125,6 +129,7 @@ class PCParadiseBot(commands.Bot):
         Overrides DPY's event loop initialization logic allowing for more fine control.
         """
         try:
+            self.loop.run_until_complete(migrations.run_migrations())
             self.loop.run_until_complete(self.start(self.config.get("token")))
         except KeyboardInterrupt:
             print("\nKeyboard Interrupt Detected")
@@ -152,6 +157,14 @@ class PCParadiseBot(commands.Bot):
         print("The bot currently has access to the following guilds:")
         for guild in self.guilds:
             print(guild.name)
+
+        async with aiosqlite.connect(self.db_path) as database:
+            cur = await database.cursor()
+            await cur.execute(
+                "INSERT OR IGNORE INTO servers VALUES (?)",
+                [guild.id for guild in self.guilds],
+            )
+            await database.commit()
 
         # Set the presence visible on the bot's profile
         await self.change_presence(
