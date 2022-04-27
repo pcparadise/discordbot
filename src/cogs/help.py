@@ -54,7 +54,7 @@ class CustomHelp(commands.HelpCommand):
                 inline=False,
             )
 
-        if freestanding_commands != []:
+        if freestanding_commands:
             out.add_field(
                 name="Freestanding Commands:",
                 value="\n".join([cmd.name for cmd in freestanding_commands]),

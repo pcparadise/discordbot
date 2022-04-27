@@ -158,7 +158,8 @@ class PCParadiseBot(commands.Bot):
             status=discord.Status.online, activity=self.default_activity
         )
 
-    async def on_disconnect(self):
+    @staticmethod
+    async def on_disconnect():
         """
         Method that gets called whenever the client has disconnected from Discord
         or a connection attempt to Discord has failed.
