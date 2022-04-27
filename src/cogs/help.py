@@ -13,7 +13,7 @@ from src.main import PCParadiseBot
 
 # pylint: disable=invalid-name
 T = TypeVar("T")
-# pylint: disable=invalid-name
+# pylint: enable=invalid-name
 
 
 def flatten(nested_iterable: Iterable[Iterable[T]]) -> Iterable[T]:
