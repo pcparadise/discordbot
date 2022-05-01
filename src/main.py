@@ -39,13 +39,13 @@ class PCParadiseBot(commands.Bot):
         self.db_path = pathlib.Path(__file__).parent.parent / "database.db"
         self.launch_time = datetime.utcnow()
         self.default_activity = discord.Activity(
-            type=discord.ActivityType.listening, name=f"{self.config.get('prefix')}help"
+            type=discord.ActivityType.listening, name=f"{self.config['prefix']}help"
         )
 
         # Call constructor of superclass Bot
         super().__init__(
             # Bot will respond to mention+cmd name and prefix+cmd name
-            command_prefix=commands.when_mentioned_or(self.config.get("prefix")),
+            command_prefix=commands.when_mentioned_or(self.config["prefix"]),
             intents=intents,
             # Enables reconnect logic for when bot loses internet connection
             # or due to an issue communicating with the API
@@ -130,7 +130,7 @@ class PCParadiseBot(commands.Bot):
         """
         try:
             self.loop.run_until_complete(migrations.run_migrations())
-            self.loop.run_until_complete(self.start(self.config.get("token")))
+            self.loop.run_until_complete(self.start(self.config["token"]))
         except KeyboardInterrupt:
             print("\nKeyboard Interrupt Detected")
             self.loop.run_until_complete(self.close())
