@@ -1,12 +1,14 @@
 """
 A module to assign roles according to activity.
 """
-from typing import List, Literal, Union
+from asyncio import sleep
+from typing import Iterable, List, Literal, Union
 import pytimeparse
 import aiosqlite
 from discord import TextChannel
 from discord.ext import commands
 from discord.message import Message
+from src.utils import is_admin
 
 
 class ActivityTracking(commands.Cog):
@@ -20,6 +22,7 @@ class ActivityTracking(commands.Cog):
         self.bot = bot
 
     @commands.command(name="add_rule")
+    @commands.check(is_admin)
     async def add_rule(self, msg: Message):
         """
         Adds a rule about activity tracking to the database for assigning roles based off of channel
@@ -114,6 +117,37 @@ class ActivityTracking(commands.Cog):
                 insert_into_activity_tracking_channels, activity_tracking_channels
             )
             await database.commit()
+
+    async def check_for_role_grant(self) -> Iterable[aiosqlite.Row]:
+        """
+        Checks who should be granted roles.
+        Returns: a list of tuple[int, int, int]. First value is
+        role id that should be assigned, second is user id, and third
+        is server id.
+        """
+        async with aiosqlite.connect(self.bot.db_path) as database:
+            cur = await database.cursor()
+            cur = await cur.execute(
+                "SELECT role_id, user_id, a.server_id FROM activity_tracking_settings a\n"
+                "  INNER JOIN message_log m, activity_tracking_channels c\n"
+                "ON\n"
+                "  c.activity_tracking_id = id AND\n"
+                "  m.channel_id = c.channel\n"
+                "GROUP BY a.id\n"
+                "HAVING\n"
+                '  time_period > strftime("%s") - `time` AND\n'
+                "  COUNT(*) >= message_count;"
+            )
+            return await cur.fetchall()
+
+    @commands.Cog.listener()
+    async def on_ready(self):
+        """
+        setup collection event which configures all this.
+        """
+        while True:
+            await sleep(10)
+            print(await self.check_for_role_grant())
 
 
 # This function is called by the load_extension method on the bot.
