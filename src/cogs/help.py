@@ -76,7 +76,7 @@ class CustomHelp(commands.HelpCommand):
                 continue
             out.add_field(
                 name=command_usage(cmd_or_group),
-                value=(cmd_or_group.help if cmd_or_group.help else ""),
+                value=(cmd_or_group.help if cmd_or_group.help else "No help given"),
             )
 
         return out
