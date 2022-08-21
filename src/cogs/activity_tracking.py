@@ -7,6 +7,7 @@ import aiosqlite
 from discord import TextChannel
 from discord.ext import commands
 from discord.message import Message
+from src.utils import is_admin
 
 
 class ActivityTracking(commands.Cog):
@@ -20,6 +21,7 @@ class ActivityTracking(commands.Cog):
         self.bot = bot
 
     @commands.command(name="add_rule")
+    @commands.check(is_admin)
     async def add_rule(self, msg: Message):
         """
         Adds a rule about activity tracking to the database for assigning roles based off of channel
