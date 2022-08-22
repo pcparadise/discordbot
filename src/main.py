@@ -30,7 +30,7 @@ EXTENSIONS = [
 ]
 
 # Define API Intents that we want to subscribe to
-intents = discord.Intents.default()
+intents = discord.Intents.all()
 
 
 class PCParadiseBot(commands.Bot):

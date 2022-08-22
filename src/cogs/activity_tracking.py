@@ -2,10 +2,11 @@
 A module to assign roles according to activity.
 """
 from asyncio import sleep
-from typing import Iterable, List, Literal, Union
+import asyncio
+from typing import Iterable, List, Literal, Optional, Tuple, Union
 import pytimeparse
 import aiosqlite
-from discord import TextChannel
+from discord import Guild, TextChannel
 from discord.ext import commands
 from discord.message import Message
 from src.utils import is_admin
@@ -118,7 +119,7 @@ class ActivityTracking(commands.Cog):
             )
             await database.commit()
 
-    async def check_for_role_grant(self) -> Iterable[aiosqlite.Row]:
+    async def check_for_role_grant(self) -> List[Tuple[int, int, int]]:
         """
         Checks who should be granted roles.
         Returns: a list of tuple[int, int, int]. First value is
@@ -137,16 +138,39 @@ class ActivityTracking(commands.Cog):
                 "HAVING\n"
                 '  COUNT(time_period > strftime("%s") - `time`) >= message_count\n'
             )
-            return await cur.fetchall()
+            return list(map(tuple, await cur.fetchall()))
+
+    async def assign_roles(self, info: Iterable[Tuple[int, int, int]]) -> None:
+        """
+        Takes a iterator of (role_id, user_id, server_id), and assigns roles to the user.
+        """
+        for role_id, user_id, server_id in info:
+            guild: Optional[Guild] = self.bot.get_guild(server_id)
+            if not guild:
+                continue
+            member = guild.get_member(user_id)
+            if not member:
+                continue
+            role = guild.get_role(role_id)
+            if not role:
+                continue
+            await member.add_roles(role)
 
     @commands.Cog.listener()
     async def on_ready(self):
         """
         setup collection event which configures all this.
         """
+        cache = set(await self.check_for_role_grant())
         while True:
-            await sleep(10)
-            print(await self.check_for_role_grant())
+            await sleep(5)
+            # There's a race condition here where the first sent message
+            # before the bot is fully up already got logged, and hence is a part of the cache. :)
+            new_results = set(await self.check_for_role_grant())
+            print(f"new assignments: {new_results} - cached: {cache}")
+            need_to_set = new_results.difference(cache)
+            asyncio.ensure_future(self.assign_roles(need_to_set))
+            cache = new_results
 
 
 # This function is called by the load_extension method on the bot.
