@@ -1,7 +1,6 @@
 """
 A module to log events.
 """
-from datetime import timezone
 import aiosqlite
 from discord.ext import commands
 from discord.message import Message
@@ -31,7 +30,7 @@ class Logging(commands.Cog):
                 (
                     msg.channel.id,
                     msg.author.id,
-                    msg.created_at.replace(tzinfo=timezone.utc).timestamp(),
+                    msg.created_at.timestamp(),
                     msg.guild.id,
                 ),
             )
