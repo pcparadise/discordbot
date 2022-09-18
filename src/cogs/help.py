@@ -87,7 +87,7 @@ class CustomHelp(commands.HelpCommand):
         out = discord.Embed(title=command_usage(cmd), description=cmd.help)
         return out
 
-    def command_not_found(self, string: str) -> str:
+    def command_not_found(self, string: str, /) -> str:
         attempted_command = string.split()[0]
         mapping = self.get_bot_mapping()
         all_commands = flatten(cmds for _, cmds in mapping.items())
@@ -102,18 +102,18 @@ class CustomHelp(commands.HelpCommand):
             f"{new_line.join([command.name for command in most_likely_commands[:3]])}"
         )
 
-    async def send_command_help(self, command: commands.Command):
+    async def send_command_help(self, command: commands.Command, /):
         """Sends the command help message"""
         dest = self.get_destination()
         await dest.send(embed=self.get_command_help(command))
 
-    async def send_cog_help(self, cog: commands.Cog):
+    async def send_cog_help(self, cog: commands.Cog, /):
         """Sends the cog help message"""
         dest = self.get_destination()
         await dest.send(embed=self.get_cog_help(cog))
 
     async def send_bot_help(
-        self, mapping: Mapping[Optional[commands.Cog], List[commands.Command]]
+        self, mapping: Mapping[Optional[commands.Cog], List[commands.Command]], /
     ):
         """Sends the bot help message"""
         dest = self.get_destination()
