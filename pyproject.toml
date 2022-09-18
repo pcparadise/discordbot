@@ -6,7 +6,7 @@ description = "A small discord bot for pcparadise"
 # on the github repo, only the original author is written below.
 authors = ["Arvinder Dhanoa <awsomearvinder@gmail.com>"]
 maintainers = [ "Ganoosh <swajabbadaja@gmail.com>" ]
-license = "MIT"
+license = "GPLv3"
 packages = [
   { include = "src" }
 ]
