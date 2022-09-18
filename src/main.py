@@ -153,6 +153,8 @@ class PCParadiseBot(commands.Bot):
         """
         Perform a few tasks when the bot is ready to accept commands.
         """
+        # prove we have user id to the type system.
+        assert self.user
         print(" - ")
         print("Client is ready")
         print(f"Logged in as {self.user} (ID: {self.user.id})")
