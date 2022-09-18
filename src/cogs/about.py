@@ -29,6 +29,6 @@ class About(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: PCParadiseBot):
+async def setup(bot: PCParadiseBot):
     """Setup the About cog."""
-    bot.add_cog(About(bot))
+    await bot.add_cog(About(bot))

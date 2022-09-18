@@ -2,11 +2,11 @@
 A module to assign roles according to activity.
 """
 from asyncio import sleep
-import asyncio
 from typing import Iterable, List, Literal, Optional, Tuple, Union
 import pytimeparse
 import aiosqlite
 from discord import Guild, TextChannel
+from discord import errors
 from discord.ext import commands
 from discord.message import Message
 from src.utils import is_admin
@@ -169,14 +169,21 @@ class ActivityTracking(commands.Cog):
             new_results = set(await self.check_for_role_grant())
             print(f"new assignments: {new_results} - cached: {cache}")
             need_to_set = new_results.difference(cache)
-            asyncio.ensure_future(self.assign_roles(need_to_set))
+            try:
+                await self.assign_roles(need_to_set)
+            # we need a better way to handle this so we don't keep retrying constantly
+            # but instead put it on a /far/ higher cooldown. Perhaps we can do the same
+            # for invalidating the cache?
+            except errors.Forbidden:
+                print("Need to set up a cog for logging to alert channel eventually")
+                continue
             cache = new_results
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot):
+async def setup(bot):
     """
     Function called by load_extension method on the bot.
     This is used to setup a discord module.
     """
-    bot.add_cog(ActivityTracking(bot))
+    await bot.add_cog(ActivityTracking(bot))
