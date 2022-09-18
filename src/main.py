@@ -2,6 +2,7 @@
 The entry point for the discord bot. You can add cogs by adding them
 to the EXTENSIONS variable.
 """
+import asyncio
 import configparser
 import os
 import pathlib
@@ -124,7 +125,7 @@ class PCParadiseBot(commands.Bot):
         print("Loading cogs...")
         for extension in EXTENSIONS:
             try:
-                self.load_extension(extension)
+                asyncio.run(self.load_extension(extension))
                 print(f"SUCCESS - {extension}")
             except commands.ExtensionNotFound:
                 print(f"FAILED - {extension}", file=sys.stderr)
@@ -134,18 +135,18 @@ class PCParadiseBot(commands.Bot):
         Overrides DPY's event loop initialization logic allowing for more fine control.
         """
         try:
-            self.loop.run_until_complete(migrations.run_migrations())
-            self.loop.run_until_complete(self.start(self.config["token"]))
+            asyncio.run(migrations.run_migrations())
+            asyncio.run(self.start(self.config["token"]))
         except KeyboardInterrupt:
             print("\nKeyboard Interrupt Detected")
-            self.loop.run_until_complete(self.close())
+            asyncio.run(self.close())
             return
         except Exception:  # pylint: disable=W0703
             traceback.print_exc(file=sys.stderr)
             return
 
         # Perform a graceful shutdown
-        self.loop.run_until_complete(self.close())
+        asyncio.run(self.close())
         print("\nConnection Closed")
 
     async def on_ready(self):
