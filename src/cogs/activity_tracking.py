@@ -179,4 +179,4 @@ async def setup(bot):
     Function called by load_extension method on the bot.
     This is used to setup a discord module.
     """
-    bot.add_cog(ActivityTracking(bot))
+    await bot.add_cog(ActivityTracking(bot))

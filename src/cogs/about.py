@@ -31,4 +31,4 @@ class About(commands.Cog):
 
 async def setup(bot: PCParadiseBot):
     """Setup the About cog."""
-    bot.add_cog(About(bot))
+    await bot.add_cog(About(bot))
