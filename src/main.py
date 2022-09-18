@@ -58,7 +58,7 @@ class PCParadiseBot(commands.Bot):
             reconnect=True,
         )
 
-        self.bot_startup()
+        asyncio.run(self.bot_startup())
 
     @staticmethod
     def get_conf_path(file_name: str) -> Union[str, None]:
@@ -117,7 +117,7 @@ class PCParadiseBot(commands.Bot):
 
         return config
 
-    def bot_startup(self):
+    async def bot_startup(self) -> None:
         """
         Blocking method that facilitates loading of all the
         bot's cogs along with any other preliminary setup.
@@ -125,7 +125,7 @@ class PCParadiseBot(commands.Bot):
         print("Loading cogs...")
         for extension in EXTENSIONS:
             try:
-                asyncio.run(self.load_extension(extension))
+                await self.load_extension(extension)
                 print(f"SUCCESS - {extension}")
             except commands.ExtensionNotFound:
                 print(f"FAILED - {extension}", file=sys.stderr)
