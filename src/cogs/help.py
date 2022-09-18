@@ -121,6 +121,6 @@ class CustomHelp(commands.HelpCommand):
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot: PCParadiseBot):
+async def setup(bot: PCParadiseBot):
     """Sets up the help command"""
     bot.help_command = CustomHelp()

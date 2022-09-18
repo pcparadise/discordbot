@@ -174,7 +174,7 @@ class ActivityTracking(commands.Cog):
 
 
 # This function is called by the load_extension method on the bot.
-def setup(bot):
+async def setup(bot):
     """
     Function called by load_extension method on the bot.
     This is used to setup a discord module.
