@@ -167,7 +167,6 @@ class ActivityTracking(commands.Cog):
             # There's a race condition here where the first sent message
             # before the bot is fully up already got logged, and hence is a part of the cache. :)
             new_results = set(await self.check_for_role_grant())
-            print(f"new assignments: {new_results} - cached: {cache}")
             need_to_set = new_results.difference(cache)
             try:
                 await self.assign_roles(need_to_set)
