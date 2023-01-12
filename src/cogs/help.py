@@ -88,27 +88,30 @@ class CustomHelp(commands.HelpCommand):
         return out
 
     async def command_not_found(self, string: str, /) -> str:
-        
+
         dest = self.get_destination()
-        
-        
+
         attempted_command = string.split()[0]
         # gets the input that discord.py passes to the default help command
         mapping = self.get_bot_mapping()
         # gets all commands from the default help and converts it to a string
-        all_commands = [cmd.name for cmd in flatten(cmds for _, cmds in mapping.items())]
+        all_commands = [
+            cmd.name for cmd in flatten(cmds for _, cmds in mapping.items())
+        ]
         most_likely_command = difflib.get_close_matches(attempted_command, all_commands)
-        
-        out = discord.Embed(title=f"{attempted_command} not found.")
-        
-        if(most_likely_command):
+
+        out = discord.Embed(
+            title=f"{attempted_command} not found",
+            description="Note, everything is case sensitive",
+        )
+
+        if most_likely_command:
             out.add_field(
                 name=f"Perhaps you meant:",
                 value=f"```{most_likely_command[0]}```",
             )
-            
-        await dest.send(embed=out)
 
+        await dest.send(embed=out)
 
     async def send_command_help(self, command: commands.Command, /):
         """Sends the command help message"""
