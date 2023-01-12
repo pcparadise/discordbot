@@ -7,7 +7,6 @@ from collections.abc import Iterable
 
 import discord
 from discord.ext import commands
-from fuzzywuzzy import fuzz
 
 from src.main import PCParadiseBot
 
