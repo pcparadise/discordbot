@@ -5,9 +5,9 @@ This module also contains related commands and functions such as about, contrib,
 from typing import Mapping, Optional, TypeVar, List
 from collections.abc import Iterable
 
+import difflib
 import discord
 from discord.ext import commands
-import difflib
 
 from src.main import PCParadiseBot
 
@@ -87,9 +87,7 @@ class CustomHelp(commands.HelpCommand):
         out = discord.Embed(title=command_usage(cmd), description=cmd.help)
         return out
 
-    async def command_not_found(self, string: str, /) -> str:
-
-        dest = self.get_destination()
+    def command_not_found(self, string: str, /) -> discord.Embed:
 
         attempted_command = string.split()[0]
         # gets the input that discord.py passes to the default help command
@@ -107,11 +105,20 @@ class CustomHelp(commands.HelpCommand):
 
         if most_likely_command:
             out.add_field(
-                name=f"Perhaps you meant:",
+                name="Perhaps you meant:",
                 value=f"```{most_likely_command[0]}```",
             )
 
-        await dest.send(embed=out)
+        return out
+
+    async def send_error_message(self, error: str | discord.Embed, /):
+        dest = self.get_destination()
+        match error:
+            case discord.Embed():
+                await dest.send(embed=error)
+            case _:
+                await dest.send(error)
+
 
     async def send_command_help(self, command: commands.Command, /):
         """Sends the command help message"""
