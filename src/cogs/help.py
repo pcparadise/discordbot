@@ -119,7 +119,6 @@ class CustomHelp(commands.HelpCommand):
             case _:
                 await dest.send(error)
 
-
     async def send_command_help(self, command: commands.Command, /):
         """Sends the command help message"""
         dest = self.get_destination()
