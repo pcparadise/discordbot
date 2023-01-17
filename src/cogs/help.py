@@ -40,7 +40,10 @@ class CustomHelp(commands.HelpCommand):
         mapping: Mapping[Optional[commands.Cog], List[commands.Command]]
     ) -> discord.Embed:
         """Generates the embed for the bot help command."""
-        out = discord.Embed(title="Help")
+        out = discord.Embed(
+            title="Help",
+            description="To find out more info, use **!help [Cog/Command]**. Note that this is case sensitive.",
+        )
 
         # this might be able to be cleaned up.
         freestanding_commands = []
@@ -48,16 +51,23 @@ class CustomHelp(commands.HelpCommand):
             if cog is None:
                 freestanding_commands.extend(cmds)
                 continue
-            out.add_field(
-                name=cog.qualified_name,
-                value=f"{count(cog.walk_commands())} commands.",
-                inline=False,
-            )
+            command_count = count(cog.walk_commands())
+            if command_count != 0:
+                command_logic = (
+                    "command" if count(cog.walk_commands()) == 1 else "commands"
+                )
+                out.add_field(
+                    name=cog.qualified_name,
+                    value=f"```{count(cog.walk_commands())} {command_logic}.```",
+                    inline=True,
+                )
 
         if freestanding_commands:
             out.add_field(
                 name="Freestanding Commands:",
-                value="\n".join([cmd.name for cmd in freestanding_commands]),
+                value="```"
+                + "\n".join([cmd.name for cmd in freestanding_commands])
+                + "```",
                 inline=False,
             )
         return out
@@ -70,7 +80,7 @@ class CustomHelp(commands.HelpCommand):
             # In python 3.10 this should be a match.
             if isinstance(cmd_or_group, commands.Group):
                 out.add_field(
-                    name=cmd_or_group.qualified_name,
+                    name=f"```{cmd_or_group.qualified_name}```",
                     value=f"{count(cmd_or_group.walk_commands())} commands.",
                 )
                 continue
