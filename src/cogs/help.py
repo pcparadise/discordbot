@@ -42,7 +42,10 @@ class CustomHelp(commands.HelpCommand):
         """Generates the embed for the bot help command."""
         out = discord.Embed(
             title="Help",
-            description="To find out more info, use **!help [Cog/Command]**. Note that this is case sensitive.",
+            description=(
+                "To find out more info, use **!help [Cog/Command]**. "
+                "Note that this is case sensitive."
+            ),
         )
 
         # this might be able to be cleaned up.
@@ -87,6 +90,7 @@ class CustomHelp(commands.HelpCommand):
             out.add_field(
                 name=command_usage(cmd_or_group),
                 value=(cmd_or_group.help if cmd_or_group.help else "No help given"),
+                inline=False,
             )
 
         return out
