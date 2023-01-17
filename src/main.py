@@ -28,6 +28,8 @@ EXTENSIONS = [
     "src.cogs.about",
     "src.cogs.logging",
     "src.cogs.activity_tracking",
+    "src.cogs.welcome",
+    "src.cogs.config",
 ]
 
 # Define API Intents that we want to subscribe to
