@@ -79,8 +79,9 @@ class Config(commands.Cog):
     @commands.command(name="enable_welcome_channel")
     @commands.check(is_admin)
     async def enable_welcome_channel(self, msg: Message):
-        """Enables the welcome channel for a server.
-        Prompts for data and updates sqlite table, you can also use this to update the info."""
+        """Enables a welcome channel where new users can verify
+        themselves by typing a certain word, and assigns
+        them a role based on their input."""
 
         server_id = msg.guild.id
 
