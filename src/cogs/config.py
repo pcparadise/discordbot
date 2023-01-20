@@ -42,32 +42,21 @@ class Config(commands.Cog):
         server_id = msg.guild.id
 
         # deletes existing welcome settings
-        try:
-            async with aiosqlite.connect(self.bot.db_path) as database:
-                cur = await database.cursor()
+        async with aiosqlite.connect(self.bot.db_path) as database:
+            cur = await database.cursor()
 
-                select_server_settings = (
-                    "SELECT * FROM welcome_config_settings WHERE server_id = ?"
-                )
-                delete_server_settings = (
-                    "DELETE FROM welcome_config_settings WHERE server_id = ?"
-                )
+            select_server_settings = (
+                "SELECT * FROM welcome_config_settings WHERE server_id = ?"
+            )
+            delete_server_settings = (
+                "DELETE FROM welcome_config_settings WHERE server_id = ?"
+            )
 
-                result = await (
-                    await cur.execute(select_server_settings, (server_id,))
-                ).fetchone()
+            result = await (
+                await cur.execute(select_server_settings, (server_id,))
+            ).fetch()
 
-                if result:
-                    await cur.execute(delete_server_settings, (server_id,))
-                    await database.commit()
-                    await msg.channel.send(
-                        (
-                            "Success! To re-enable the "
-                            "welcome channel run !enable_welcome_channel"
-                        )
-                    )
-        except aiosqlite.OperationalError as error:  # this is iffy
-            if "no such column: server_id" in str(error):
+            if len(result) == 0:
                 await msg.channel.send(
                     (
                         "No welcome channel has been set up yet. "
@@ -75,6 +64,16 @@ class Config(commands.Cog):
                         "run the command !enable_welcome_channel."
                     )
                 )
+                return
+
+            await cur.execute(delete_server_settings, (server_id,))
+            await database.commit()
+            await msg.channel.send(
+                (
+                    "Success! To re-enable the "
+                    "welcome channel run !enable_welcome_channel"
+                )
+            )
 
     @commands.command(name="enable_welcome_channel")
     @commands.check(is_admin)

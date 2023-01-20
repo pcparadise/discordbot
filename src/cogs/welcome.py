@@ -17,13 +17,6 @@ class WelcomeModule(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        """
-        Prints something when the bot is online.
-        """
-        print(f'"{self.bot.user}" is ready.')
-
-    @commands.Cog.listener()
     async def on_message(self, msg):
         """General on message discord event"""
 

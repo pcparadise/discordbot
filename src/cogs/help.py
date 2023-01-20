@@ -16,13 +16,18 @@ T = TypeVar("T")
 # pylint: enable=invalid-name
 
 
+def codeblock(text: str) -> str:
+    """Adds codeblock formatting to the given text."""
+    return "```" + text + "```"
+
+
 def flatten(nested_iterable: Iterable[Iterable[T]]) -> Iterable[T]:
-    """Turns a set of listed iterables to an unested list of T"""
+    """Turns a set of listed iterables to an unested list of T."""
     return (item for iterable in nested_iterable for item in iterable)
 
 
 def count(iterable: Iterable) -> int:
-    """count the amount of items in an iterator"""
+    """count the amount of items in an iterator."""
     return sum(1 for _ in iterable)
 
 
@@ -56,21 +61,17 @@ class CustomHelp(commands.HelpCommand):
                 continue
             command_count = count(cog.walk_commands())
             if command_count != 0:
-                command_logic = (
-                    "command" if count(cog.walk_commands()) == 1 else "commands"
-                )
+                command_logic = "command" if command_count == 1 else "commands"
                 out.add_field(
                     name=cog.qualified_name,
-                    value=f"```{count(cog.walk_commands())} {command_logic}.```",
+                    value=codeblock(command_count + " " + command_logic),
                     inline=True,
                 )
 
         if freestanding_commands:
             out.add_field(
                 name="Freestanding Commands:",
-                value="```"
-                + "\n".join([cmd.name for cmd in freestanding_commands])
-                + "```",
+                value=codeblock("\n".join([cmd.name for cmd in freestanding_commands])),
                 inline=False,
             )
         return out
@@ -83,15 +84,15 @@ class CustomHelp(commands.HelpCommand):
             # In python 3.10 this should be a match.
             if isinstance(cmd_or_group, commands.Group):
                 out.add_field(
-                    name=f"```{cmd_or_group.qualified_name}```",
+                    name=codeblock(cmd_or_group.qualified_name),
                     value=f"{count(cmd_or_group.walk_commands())} commands.",
                 )
                 continue
             out.add_field(
                 name=command_usage(cmd_or_group),
-                value="```"
-                + (cmd_or_group.help if cmd_or_group.help else "No help given")
-                + "```",
+                value=codeblock(
+                    cmd_or_group.help if cmd_or_group.help else "No help given"
+                ),
                 inline=False,
             )
 
@@ -122,7 +123,7 @@ class CustomHelp(commands.HelpCommand):
         if most_likely_command:
             out.add_field(
                 name="Perhaps you meant:",
-                value=f"```{most_likely_command[0]}```",
+                value=codeblock(most_likely_command[0]),
             )
 
         return out
