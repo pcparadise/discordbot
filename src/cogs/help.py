@@ -64,7 +64,7 @@ class CustomHelp(commands.HelpCommand):
                 command_logic = "command" if command_count == 1 else "commands"
                 out.add_field(
                     name=cog.qualified_name,
-                    value=codeblock(command_count + " " + command_logic),
+                    value=codeblock(f"{command_count} {command_logic}"),
                     inline=True,
                 )
 
