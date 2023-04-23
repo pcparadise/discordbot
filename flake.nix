@@ -12,10 +12,12 @@
     flake-utils,
     alejandra,
   }:
-    flake-utils.lib.eachDefaultSystem (system: let pkgs = import nixpkgs { inherit system; }; in {
+    flake-utils.lib.eachDefaultSystem (system: let
+      pkgs = import nixpkgs {inherit system;};
+    in {
       devShell = pkgs.mkShell {
-        nativeBuildInputs = [ pkgs.gcc pkgs.pkg-config ];
-        buildInputs = [ pkgs.poetry ];
+        nativeBuildInputs = [pkgs.gcc pkgs.pkg-config];
+        buildInputs = [pkgs.poetry];
       };
       formatter = alejandra.defaultPackage.${system};
     });
