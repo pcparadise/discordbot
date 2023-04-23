@@ -252,10 +252,11 @@ class Config(commands.Cog):
                 insert_settings_into,
                 (msg.guild.id, int(time_period), role_for_rule.id, message_count),
             )
+
             id_fetch = await id_fetch.fetchone()
-            if not id_fetch:
-                raise Exception("Failed to fetch when it should be impossible!")
+            assert not id_fetch
             activity_tracking_id = id_fetch[0]
+
             insert_into_activity_tracking_channels = (
                 "INSERT INTO activity_tracking_channels (channel, activity_tracking_id)"
                 "VALUES (?, ?);"
