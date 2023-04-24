@@ -26,12 +26,10 @@ def _load_migration(name: str) -> _Migration:
     return importlib.import_module(f".{name}", package=__package__)  # type: ignore
 
 
-async def run_migrations():
+async def run_migrations(db_path: pathlib.Path):
     """
     Run migrations on all our stuff.
     """
-    program_path = pathlib.Path(__file__).absolute().parent.parent
-    db_path = program_path / "database.db"
     version = None
     async with aiosqlite.connect(db_path) as database:
         cur = await database.cursor()
