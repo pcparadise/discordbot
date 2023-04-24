@@ -44,7 +44,7 @@ class PCParadiseBot(commands.Bot):
 
     def __init__(self):
         self.config = PCParadiseBot.initialize_config()
-        self.db_path = pathlib.Path(__file__).parent.parent / "database.db"
+        self.db_path = PCParadiseBot.get_program_path() / "database.db"
         self.launch_time = datetime.utcnow()
         self.default_activity = discord.Activity(
             type=discord.ActivityType.listening, name=f"{self.config['prefix']}help"
@@ -63,6 +63,13 @@ class PCParadiseBot(commands.Bot):
         asyncio.run(self.bot_startup())
 
     @staticmethod
+    def get_program_path() -> pathlib.Path:
+        """
+        returns the path of the currently running program.
+        """
+        return pathlib.Path(__file__).absolute().parent.parent
+
+    @staticmethod
     def get_conf_path(file_name: str) -> Union[str, None]:
         """
         Gets the config from a number of potential
@@ -73,7 +80,7 @@ class PCParadiseBot(commands.Bot):
         """
         # get the parent path of the parent path of the current file
         # this must be just above the "src/" directory
-        program_path = pathlib.Path(__file__).absolute().parent.parent
+        program_path = PCParadiseBot.get_program_path()
         file_path = program_path / file_name
         if os.path.exists(file_path):
             return str(file_path)
