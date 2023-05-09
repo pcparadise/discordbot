@@ -78,8 +78,8 @@ class Config(commands.Cog):
     @commands.command(name="enable_welcome_channel")
     @commands.check(is_admin)
     async def enable_welcome_channel(self, msg: Message):
-        """Enables a welcome channel where new users can verify
-        themselves by typing a certain word, and assigns
+        """Enables a welcome channel where new users can verify \
+        themselves by typing a certain word, and assigns \
         them a role based on their input."""
 
         server_id = msg.guild.id
@@ -181,8 +181,8 @@ class Config(commands.Cog):
     @commands.check(is_admin)
     async def add_rule(self, msg: Message):
         """
-        Adds a rule about activity tracking to the database for assigning roles based off of channel
-        activity.
+        Adds a rule about activity tracking to the database for \
+        assigning roles based off of channel activity.
         """
         if not msg.guild:
             await msg.reply(
