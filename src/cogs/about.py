@@ -8,7 +8,6 @@ class About(commands.Cog):
     """Gives information about the bot"""
 
     def __init__(self, bot: PCParadiseBot):
-        self.embed_color = discord.Color(0x2F3136)
         self.bot = bot
         self.prefix = self.bot.config.get("prefix")
 
@@ -23,7 +22,6 @@ class About(commands.Cog):
         embed = discord.Embed(
             title="How To Contribute:",
             description=f"Visit: [{contributing_md_url[8:]}]({contributing_md_url})",
-            color=self.embed_color,
         )
 
         await ctx.send(embed=embed)
