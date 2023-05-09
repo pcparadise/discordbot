@@ -39,6 +39,8 @@ class WelcomeModule(commands.Cog):
             if result is None:
                 return None
             detection_word, role_id, welcome_channel_id = result
+                await cur.execute(server_settings_query, (msg.guild.id,))
+                result = await cur.fetchone()
 
         # a few checks to make pylint happy and just adds general logic
         is_detection_word = detection_word == msg.content.lower()
