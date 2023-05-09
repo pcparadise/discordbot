@@ -27,20 +27,22 @@ class WelcomeModule(commands.Cog):
             None,
         )
 
-        async with aiosqlite.connect(self.bot.db_path) as database:
-            cur = await database.cursor()
-            server_settings_query = (
-                "SELECT detection_word, role_id, welcome_channel_id "
-                "FROM welcome_config_settings "
-                "WHERE server_id = ?"
-            )
-            await cur.execute(server_settings_query, (msg.guild.id,))
-            result = await cur.fetchone()
-            if result is None:
-                return None
-            detection_word, role_id, welcome_channel_id = result
+        try:
+            async with aiosqlite.connect(self.bot.db_path) as database:
+                cur = await database.cursor()
+                server_settings_query = (
+                    "SELECT detection_word, role_id, welcome_channel_id "
+                    "FROM welcome_config_settings "
+                    "WHERE server_id = ?"
+                )
                 await cur.execute(server_settings_query, (msg.guild.id,))
                 result = await cur.fetchone()
+                if result is None:
+                    return None
+                detection_word, role_id, welcome_channel_id = result
+        except Exception as e:
+            print(f"An error occurred while querying the database: {e}")
+            return None
 
         # a few checks to make pylint happy and just adds general logic
         is_detection_word = detection_word == msg.content.lower()
@@ -59,25 +61,44 @@ class WelcomeModule(commands.Cog):
             and is_welcome_channel
         ):
             role = discord.utils.get(msg.guild.roles, id=role_id)
-            await msg.author.add_roles(role, reason="Passed verification in #welcome")
+            try:
+                await msg.author.add_roles(
+                    role, reason="Passed verification in #welcome"
+                )
+            except Exception as e:
+                print(f"An error occurred while adding role to user: {e}")
+                await msg.channel.send(
+                    "An error occurred while adding your role. Please try again later."
+                )
+                return None
+
             await msg.delete()
 
         elif not msg.author.bot and msg.guild and is_welcome_channel:
             embed = discord.Embed(
                 title=f"Hey {msg.author.name}",
                 description=(
-                    "You have failed to verify yourself. "
-                    "Please take the time to re-read the rules in order to "
-                    "learn how to gain access to all channels on this server. "
-                    "Thank you!"
+                    """
+                    You have failed to verify yourself. \
+                    Please take the time to re-read the rules in order to \
+                    learn how to gain access to all channels on this server. \
+                    Thank you!
+                """
                 ),
             )
 
-            failed_verify = await msg.channel.send(embed=embed)
-            await msg.delete()
+            try:
+                failed_verify = await msg.channel.send(embed=embed)
+                await msg.delete()
 
-            await asyncio.sleep(10)
-            await failed_verify.delete()
+                await asyncio.sleep(10)
+                await failed_verify.delete()
+            except Exception as e:
+                print(f"An error occurred while sending/deleting message: {e}")
+                await msg.channel.send(
+                    "An error occurred while sending the verification message. Please try again later."
+                )
+                return None
 
 
 # This function is called by the load_extension method on the bot.
