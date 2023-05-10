@@ -32,7 +32,7 @@ class WelcomeModule(commands.Cog):
 
         except discord.HTTPException:
             await msg.channel.send(
-                "An error occurred while adding your role. " "Please try again later."
+                "An error occurred while adding your role. Please try again later."
             )
 
     async def handle_welcome_message(self, msg):
