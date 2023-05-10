@@ -55,7 +55,7 @@ class Config(commands.Cog):
             await cur.execute(select_server_settings, (server_id,))
             result = await cur.fetchone()
 
-            if len(result) == 0:
+            if not result:
                 await msg.channel.send(
                     (
                         "No welcome channel has been set up yet. "
