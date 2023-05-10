@@ -52,11 +52,10 @@ class Config(commands.Cog):
                 "DELETE FROM welcome_config_settings WHERE server_id = ?"
             )
 
-            result = await (
-                await cur.execute(select_server_settings, (server_id,))
-            ).fetch()
+            await cur.execute(select_server_settings, (server_id,))
+            result = await cur.fetchone()
 
-            if len(result) == 0:
+            if not result:
                 await msg.channel.send(
                     (
                         "No welcome channel has been set up yet. "

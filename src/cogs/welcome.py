@@ -18,14 +18,29 @@ class WelcomeModule(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, msg):
-        """General on message discord event"""
+        """
+        General on message discord event
+        """
 
         # sql logic to check if welcome channel is enabled in server and get config if so
-        detection_word, role_id, welcome_channel_id = (
-            None,
-            None,
-            None,
-        )
+
+        try:
+            await self.handle_welcome_message(msg)
+
+        except discord.Forbidden:
+            await msg.channel.send("An error occurred. (Bot is Missing Permissions)")
+
+        except discord.HTTPException:
+            await msg.channel.send(
+                "An error occurred while adding your role. Please try again later."
+            )
+
+    async def handle_welcome_message(self, msg):
+        """
+        Handles messages in the welcome channel for verification.
+        """
+
+        detection_word, role_id, welcome_channel_id = None, None, None
 
         async with aiosqlite.connect(self.bot.db_path) as database:
             cur = await database.cursor()
@@ -64,10 +79,9 @@ class WelcomeModule(commands.Cog):
             embed = discord.Embed(
                 title=f"Hey {msg.author.name}",
                 description=(
-                    "You have failed to verify yourself. "
-                    "Please take the time to re-read the rules in order to "
-                    "learn how to gain access to all channels on this server. "
-                    "Thank you!"
+                    "You have failed to verify yourself. Please take the time to "
+                    "re-read the rules in order to learn how to gain access to "
+                    "all channels on this server. Thank you!"
                 ),
             )
 
