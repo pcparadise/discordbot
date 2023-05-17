@@ -30,6 +30,7 @@ EXTENSIONS = [
     "src.cogs.activity_tracking",
     "src.cogs.welcome",
     "src.cogs.config",
+    "src.cogs.error_handler",
 ]
 
 # Define API Intents that we want to subscribe to
