@@ -1,5 +1,5 @@
 """
-An example module for future contributors to reference using events.
+A module that provides error handling using events.
 """
 import inspect
 
@@ -8,11 +8,7 @@ from discord.ext import commands
 from src.utils import errors
 
 class CommandErrorHandler(commands.Cog):
-    """
-    An example class that inherits from commands.Cog for contributors to reference.
-    This one uses events unlike the one in example_command_module
-    """
-
+    """A cog for handling command errors."""
     def __init__(self, bot):
         self.bot = bot
 
