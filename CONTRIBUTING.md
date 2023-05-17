@@ -29,7 +29,7 @@ Then, in your code, when you want to raise this error, you can use:
 # Raise the new command error
 raise errors.NewCommandError() # This should be contained under a check of some form
 ```
-Make sure to import the errors module where you want to use it with ``import src.utils.errors``. _(The error will be caught by the ``on_command_error`` method in the ``CommandErrorHandler`` class under ``src/cogs/error_handler.py``, and the corresponding error message will be sent.)_
+Make sure to import the errors module where you want to use it with ``from src.utils import errors``. _(The error will be caught by the ``on_command_error`` method in the ``CommandErrorHandler`` class under ``src/cogs/error_handler.py``, and the corresponding error message will be sent.)_
 
 *Remember to customize the error message and class name in each error class to fit your specific needs.*
 

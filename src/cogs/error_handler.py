@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 import src.utils.errors as errors
 import inspect
+from src.utils import errors
 
 class CommandErrorHandler(commands.Cog):
     """
