@@ -1,10 +1,10 @@
 """
 An example module for future contributors to reference using events.
 """
+import inspect
+
 import discord
 from discord.ext import commands
-import src.utils.errors as errors
-import inspect
 from src.utils import errors
 
 class CommandErrorHandler(commands.Cog):
@@ -27,18 +27,19 @@ class CommandErrorHandler(commands.Cog):
         """
         if isinstance(error, commands.CommandError):
             error_embed = discord.Embed()
-            
+
             for class_name, obj in inspect.getmembers(errors):
                 if inspect.isclass(obj) and hasattr(obj, 'message'):
-                        error_message = getattr(obj, 'message')
-                        if isinstance(error, getattr(errors, class_name)):
-                            error_embed.add_field(name="Error", value=error_message)
-                            break
-            
+                    error_message = getattr(obj, 'message')
+                    if isinstance(error, getattr(errors, class_name)):
+                        error_embed.add_field(name="Error", value=error_message)
+                        break
+
             # Fallback error message
             if len(error_embed.fields) == 0:
-                error_embed.add_field(name="Error", value="An error occurred while executing the command.")
-            
+                error_embed.add_field(name="Error",
+                                      value="An error occurred while executing the command.")
+
             await ctx.send(embed=error_embed)
         else:
             await ctx.send("An error occurred.")

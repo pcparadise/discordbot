@@ -1,3 +1,8 @@
+"""
+Contains custom error classes for command error handling in Discord bot commands.
+Refer to CONTRIBUTING.md for more information
+"""
+
 from discord.ext import commands
 
 class GuildCommandError(commands.CommandError):
@@ -11,5 +16,3 @@ class MemberCommandError(commands.CommandError):
 class BotCommandError(commands.CommandError):
     """Error raised when a bot user is provided."""
     message = "User cannot be a bot."
-
-
