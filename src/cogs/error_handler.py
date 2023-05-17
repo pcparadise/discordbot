@@ -1,6 +1,7 @@
 """
 An example module for future contributors to reference using events.
 """
+import discord
 from discord.ext import commands
 import src.utils.errors as errors
 import inspect
@@ -24,16 +25,20 @@ class CommandErrorHandler(commands.Cog):
         If the error does not match any defined error classes, a fallback error message is sent.
         """
         if isinstance(error, commands.CommandError):
+            error_embed = discord.Embed()
             
             for class_name, obj in inspect.getmembers(errors):
                 if inspect.isclass(obj) and hasattr(obj, 'message'):
                         error_message = getattr(obj, 'message')
                         if isinstance(error, getattr(errors, class_name)):
-                            await ctx.send(error_message)
-                            return
+                            error_embed.add_field(name="Error", value=error_message)
+                            break
             
             # Fallback error message
-            await ctx.send("An error occurred while executing the command.")
+            if len(error_embed.fields) == 0:
+                error_embed.add_field(name="Error", value="An error occurred while executing the command.")
+            
+            await ctx.send(embed=error_embed)
         else:
             await ctx.send("An error occurred.")
             return
