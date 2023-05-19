@@ -33,9 +33,10 @@ class CommandErrorHandler(commands.Cog):
         message = ""
 
         match error:
-            ### uncomment to enable custom error messages, if needed.
-            # case commands.CommandError(message=message) if message is not None:
-            #    return message
+            # to utilize this, create a custom class that inherits from commands.CommandError
+            # and define message as a string
+            case commands.CommandError(message=message) if message is not None:
+                return message
             case commands.CommandNotFound():
                 message = "Sorry, I don't have that command... _(yet)_."
             case commands.CommandOnCooldown():
