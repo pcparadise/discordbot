@@ -29,7 +29,6 @@ class CommandErrorHandler(commands.Cog):
     def create_error_string(self, ctx, error):
         """Returns an error string depending on the error type."""
         # change to "/" when that's implemented
-        prefix = "!"
         message = ""
 
         match error:
@@ -59,14 +58,14 @@ class CommandErrorHandler(commands.Cog):
                     "Here's some more info:\n```fix\n"
                     f"{str(error) if str(error) else 'N/A'}```"
                     "_If that doesn't help, feel free to try_ "
-                    f"`{prefix}help {ctx.message.content[1:]}`"
+                    f"`{self.bot.prefix}help {ctx.message.content[1:]}`"
                 )
             case commands.BadArgument():
                 message = (
                     "Seems like one of the arguments you provided is "
                     "invalid.\nIf you need a refresher, feel free to check "
                     "the command usage with:\n```fix\n"
-                    f"{prefix}help {ctx.command}```"
+                    f"{self.bot.prefix}help {ctx.command}```"
                 )
             case commands.DisabledCommand():
                 message = (

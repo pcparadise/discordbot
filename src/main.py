@@ -56,6 +56,8 @@ class PCParadiseBot(commands.Bot):
             type=discord.ActivityType.listening, name=f"{self.config['prefix']}help"
         )
 
+        self.prefix = self.config["prefix"]
+
         # Call constructor of superclass Bot
         super().__init__(
             # Bot will respond to mention+cmd name and prefix+cmd name
