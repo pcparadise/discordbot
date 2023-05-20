@@ -10,7 +10,6 @@ import discord
 from discord.ext import commands
 from discord.message import Message
 from discord import TextChannel
-from src.utils import is_admin
 
 
 class Config(commands.Cog):
@@ -36,7 +35,7 @@ class Config(commands.Cog):
             return None
 
     @commands.command(name="disable_welcome_channel")
-    @commands.check(is_admin)
+    @commands.has_permissions(administrator=True)
     async def disable_welcome_channel(self, msg: Message):
         """Command that allows an admin to disable the welcome channel for a server."""
         server_id = msg.guild.id
@@ -75,7 +74,7 @@ class Config(commands.Cog):
             )
 
     @commands.command(name="enable_welcome_channel")
-    @commands.check(is_admin)
+    @commands.has_permissions(administrator=True)
     async def enable_welcome_channel(self, msg: Message):
         """Enables a welcome channel where new users can verify \
         themselves by typing a certain word, and assigns \
@@ -177,7 +176,7 @@ class Config(commands.Cog):
                 )
 
     @commands.command(name="add_activity_rule")
-    @commands.check(is_admin)
+    @commands.has_permissions(administrator=True)
     async def add_rule(self, msg: Message):
         """
         Adds a rule about activity tracking to the database for \
