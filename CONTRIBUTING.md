@@ -14,5 +14,8 @@ We use pyproject.toml and poetry to manage dependencies. We do ask that if a lib
 ## Updating the database
 Please update the schema and throw in some barebone testing data into the in repo database, if you add new tables or fields. This makes it trivial to work with. The production database will *not* be in this repo. 
 
+## Error Handling
+Most errors are handled automatically. You can refer to the [discord.py docs](https://discordpy.readthedocs.io/en/stable/interactions/api.html#exception-hierarchy) for a list of exceptions you can raise. In case one of these exceptions is not explicitly handled in `cogs/error_handler.py`, and you believe it should be, feel free to add a match case for it. If you encounter an error that is not handled by Discord.py, and you want to create a custom one (use this sparingly, only if you need to), create a new class that inherits from `commands.CommandError` and define a custom error message under `self.message` in `__init__`.
+
 ## Code of Conduct
 We don't have a formal code of conduct, but we do ask that everyone remains civil. Arguing will not be tolerated, and we ask that everyone respects the final decision made. That's not to say we can't revisit old issues - but please add something new to the topic when doing so.

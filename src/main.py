@@ -30,6 +30,7 @@ EXTENSIONS = [
     "src.cogs.activity_tracking",
     "src.cogs.welcome",
     "src.cogs.config",
+    "src.cogs.error_handler",
 ]
 
 # Define API Intents that we want to subscribe to
@@ -54,6 +55,8 @@ class PCParadiseBot(commands.Bot):
         self.default_activity = discord.Activity(
             type=discord.ActivityType.listening, name=f"{self.config['prefix']}help"
         )
+
+        self.prefix = self.config["prefix"]
 
         # Call constructor of superclass Bot
         super().__init__(
