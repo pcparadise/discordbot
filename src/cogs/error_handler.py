@@ -41,7 +41,7 @@ class CommandErrorHandler(commands.Cog):
             case commands.CommandOnCooldown():
                 message = (
                     f"Please wait **{round(error.retry_after, 1)}** "
-                    f"seconds before using that command again."
+                    "seconds before using that command again."
                 )
             case commands.NoPrivateMessage():
                 message = "This command must be run inside of a guild."
@@ -56,12 +56,12 @@ class CommandErrorHandler(commands.Cog):
                 missing_permissions = ", ".join(error.missing_permissions)
                 message = (
                     "Sorry, I don't have permissions to do that.\n"
-                    f"I'm missing the following permission(s):"\
+                    "I'm missing the following permission(s):"
                     f"```fix\n{missing_permissions}```"
                 )
             case commands.MissingRequiredArgument():
                 message = (
-                    f"Missing argument:\n```fix\n"\
+                    "Missing argument:\n```fix\n"
                     f"{str(error.param) if str(error.param) else 'N/A'}```"
                 )
                 footer = f"For more info check: {self.bot.prefix}help {ctx.command}"

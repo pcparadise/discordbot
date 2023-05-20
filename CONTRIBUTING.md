@@ -15,23 +15,7 @@ We use pyproject.toml and poetry to manage dependencies. We do ask that if a lib
 Please update the schema and throw in some barebone testing data into the in repo database, if you add new tables or fields. This makes it trivial to work with. The production database will *not* be in this repo. 
 
 ## Error Handling
-To handle new errors, you need to add a new error class to the ``src/utils/errors.py`` file. The error class should inherit from ``commands.CommandError`` and include a message attribute with the error message. Here's an example: 
-```py
-# src/utils/errors.py
-from discord.ext import commands
-
-class NewCommandError(commands.CommandError): # change the class name, can be anything
-    """Error raised for a new command error."""
-    message = "New command error message." # add a custom error message 
-```
-Then, in your code, when you want to raise this error, you can use:
-```py
-# Raise the new command error
-raise errors.NewCommandError() # This should be contained under a check of some form
-```
-Make sure to import the errors module where you want to use it with ``from src.utils import errors``. _(The error will be caught by the ``on_command_error`` method in the ``CommandErrorHandler`` class under ``src/cogs/error_handler.py``, and the corresponding error message will be sent.)_
-
-*Remember to customize the error message and class name in each error class to fit your specific needs.*
+Most errors are handled automatically. You can refer to the [discord.py docs](https://discordpy.readthedocs.io/en/stable/interactions/api.html#exception-hierarchy) for a list of exceptions you can raise. In case one of these exceptions is not explicitly handled in `cogs/error_handler.py`, and you believe it should be, feel free to add a match case for it. If you encounter an error that is not handled by Discord.py, and you want to create a custom one (use this sparingly, only if you need to), create a new class that inherits from `commands.CommandError` and define a custom error message under `self.message` in `__init__`.
 
 ## Code of Conduct
 We don't have a formal code of conduct, but we do ask that everyone remains civil. Arguing will not be tolerated, and we ask that everyone respects the final decision made. That's not to say we can't revisit old issues - but please add something new to the topic when doing so.
