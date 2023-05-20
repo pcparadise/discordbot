@@ -29,7 +29,7 @@ class CommandErrorHandler(commands.Cog):
     def create_error_string(self, ctx, error):
         """Returns an error string depending on the error type."""
         # change to "/" when that's implemented
-        message = ""
+        message, footer = "", ""
 
         match error:
             # to utilize this, create a custom class that inherits from commands.CommandError
@@ -46,20 +46,25 @@ class CommandErrorHandler(commands.Cog):
             case commands.NoPrivateMessage():
                 message = "This command must be run inside of a guild."
             case commands.MemberNotFound():
-                message = "Sorry, I couldn't find that member."
+                message = f"Sorry, I couldn't find the member `@{error.argument}`."
             case commands.MissingPermissions():
                 message = (
                     "Hey! You don't have permissions to run that command! "
                     "What do you take me for? A fool??"
                 )
+            case commands.BotMissingPermissions():
+                missing_permissions = ", ".join(error.missing_permissions)
+                message = (
+                    "Sorry, I don't have permissions to do that.\n"
+                    f"I'm missing the following permission(s):"\
+                    f"```fix\n{missing_permissions}```"
+                )
             case commands.MissingRequiredArgument():
                 message = (
-                    "Seems like you're missing an argument.\n"
-                    "Here's some more info:\n```fix\n"
-                    f"{str(error) if str(error) else 'N/A'}```"
-                    "_If that doesn't help, feel free to try_ "
-                    f"`{self.bot.prefix}help {ctx.message.content[1:]}`"
+                    f"Missing argument:\n```fix\n"\
+                    f"{str(error.param) if str(error.param) else 'N/A'}```"
                 )
+                footer = f"For more info check: {self.bot.prefix}help {ctx.command}"
             case commands.BadArgument():
                 message = (
                     "Seems like one of the arguments you provided is "
@@ -81,18 +86,22 @@ class CommandErrorHandler(commands.Cog):
                     "Oops, an error occurred while executing the command:\n"
                     f"```diff\n+ Error ID: {log_id}\n"
                     f"- {error_classname}{': ' + str(error) if str(error) else ''}```"
-                    "Please try again, or contact bot support and "
-                    f"provide the Error ID _({log_id})_."
                 )
-        return message
+                footer = (
+                    "Please try again, or contact bot support and "
+                    f"provide the Error ID ({log_id})."
+                )
+        return message, footer
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         """An event that triggers whenever a command encounters an error."""
-        error_message = self.create_error_string(ctx, error)
+        error_message, footer_message = self.create_error_string(ctx, error)
 
         error_embed = discord.Embed()
         error_embed.add_field(name="Error", value=error_message)
+        if footer_message:
+            error_embed.set_footer(text=footer_message)
         await ctx.send(embed=error_embed)
 
 
