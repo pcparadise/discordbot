@@ -185,9 +185,9 @@ class PCParadiseBot(commands.Bot):
 
         async with aiosqlite.connect(self.db_path) as database:
             cur = await database.cursor()
-            await cur.execute(
+            await cur.executemany(
                 "INSERT OR IGNORE INTO servers VALUES (?)",
-                [guild.id for guild in self.guilds],
+                [(guild.id,) for guild in self.guilds],
             )
             await database.commit()
 
