@@ -32,7 +32,7 @@
       };
     in {
       devShell = pkgs.mkShell {
-        nativeBuildInputs = [pkgs.gcc pkgs.pkg-config];
+        nativeBuildInputs = [pkgs.gcc pkgs.pkg-config pkgs.pyright];
         buildInputs = [pkgs.poetry];
       };
 
