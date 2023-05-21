@@ -48,7 +48,9 @@ class PCParadiseBot(commands.Bot):
 
         db_path = PCParadiseBot.get_program_path() / "database.db"
         self.db_path = (
-            self.config["databasepath"] if self.config.get("databasepath") else db_path
+            pathlib.Path(self.config["databasepath"])
+            if self.config.get("databasepath")
+            else db_path
         )
 
         self.launch_time = datetime.utcnow()
