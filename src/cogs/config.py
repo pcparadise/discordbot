@@ -36,8 +36,10 @@ class Config(commands.Cog):
 
     @commands.command(name="disable_welcome_channel")
     @commands.has_permissions(administrator=True)
+    @commands.guild_only()
     async def disable_welcome_channel(self, msg: Message):
         """Command that allows an admin to disable the welcome channel for a server."""
+        assert msg.guild
         server_id = msg.guild.id
 
         # deletes existing welcome settings
@@ -74,11 +76,13 @@ class Config(commands.Cog):
             )
 
     @commands.command(name="enable_welcome_channel")
+    @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def enable_welcome_channel(self, msg: Message):
         """Enables a welcome channel where new users can verify \
         themselves by typing a certain word, and assigns \
         them a role based on their input."""
+        assert msg.guild
 
         server_id = msg.guild.id
 
