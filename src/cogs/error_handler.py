@@ -28,6 +28,10 @@ class CommandErrorHandler(commands.Cog):
 
     def create_error_string(self, ctx, error):
         """Returns an error string depending on the error type."""
+        # checks
+        if ctx.message.content.startswith("!!"):
+            return False
+
         # change to "/" when that's implemented
         message, footer = "", ""
 
