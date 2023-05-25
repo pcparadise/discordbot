@@ -1,5 +1,6 @@
 """Module defining the cog \"About\""""
 import discord
+from discord import app_commands
 from discord.ext import commands
 from src.main import PCParadiseBot
 
@@ -11,7 +12,7 @@ class About(commands.Cog):
         self.bot = bot
         self.prefix = self.bot.config.get("prefix")
 
-    @commands.command(name="contrib")
+    @app_commands.command(name="contrib")
     async def send_contribution_info(self, ctx):
         """Contains information about how to contribute to the bot."""
 
