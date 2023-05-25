@@ -53,13 +53,13 @@ class CustomHelp(commands.HelpCommand):
             ),
         )
 
-        # this might be able to be cleaned up.
         freestanding_commands = []
         for cog, cmds in mapping.items():
             if cog is None:
                 freestanding_commands.extend(cmds)
                 continue
-            command_count = count(cog.walk_commands())
+            visible_cmds = [cmd for cmd in cmds if not cmd.hidden]
+            command_count = len(visible_cmds)
             if command_count != 0:
                 command_logic = "command" if command_count == 1 else "commands"
                 out.add_field(
@@ -69,25 +69,31 @@ class CustomHelp(commands.HelpCommand):
                 )
 
         if freestanding_commands:
-            out.add_field(
-                name="Freestanding Commands:",
-                value=codeblock("\n".join([cmd.name for cmd in freestanding_commands])),
-                inline=False,
-            )
+            visible_freestanding_commands = [cmd for cmd in freestanding_commands if not cmd.hidden]
+            if visible_freestanding_commands:
+                out.add_field(
+                    name="Freestanding Commands:",
+                    value=codeblock("\n".join([cmd.name for cmd in visible_freestanding_commands])),
+                    inline=False,
+                )
         return out
+
 
     @staticmethod
     def get_cog_help(cog: commands.Cog) -> discord.Embed:
-        """generates a help embed from the cog."""
+        """Generates a help embed from the cog."""
         out = discord.Embed(title=cog.qualified_name, description=cog.description)
         for cmd_or_group in cog.walk_commands():
-            # In python 3.10 this should be a match.
+            if cmd_or_group.hidden:
+                continue  # Skip hidden commands
+
             if isinstance(cmd_or_group, commands.Group):
                 out.add_field(
                     name=codeblock(cmd_or_group.qualified_name),
                     value=f"{count(cmd_or_group.walk_commands())} commands.",
                 )
                 continue
+
             out.add_field(
                 name=command_usage(cmd_or_group),
                 value=codeblock(
@@ -97,6 +103,7 @@ class CustomHelp(commands.HelpCommand):
             )
 
         return out
+
 
     @staticmethod
     def get_command_help(cmd: commands.Command) -> discord.Embed:
