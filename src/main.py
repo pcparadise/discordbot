@@ -60,6 +60,8 @@ class PCParadiseBot(commands.Bot):
 
         self.prefix = self.config["prefix"]
 
+        owner_ids = self.config["ownerid"].split(',')
+        self.owners = [int(owner_id.strip()) for owner_id in owner_ids]
         # Call constructor of superclass Bot
         super().__init__(
             # Bot will respond to mention+cmd name and prefix+cmd name
