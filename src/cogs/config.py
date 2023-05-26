@@ -2,14 +2,13 @@
 A config module that updates values.
 """
 from typing import List, Literal, Union
-import asyncio
 import pytimeparse
 import aiosqlite
 
 import discord
 from discord.ext import commands
 from discord.message import Message
-from discord import TextChannel
+from discord import app_commands
 
 
 class Config(commands.Cog):
@@ -20,27 +19,16 @@ class Config(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    async def prompt(self, ctx, prompt_message: str):
-        """A basic function that prompts a user for a question"""
-        await ctx.send(prompt_message)
-
-        def check(msg):
-            return msg.author == ctx.author and msg.channel == ctx.channel
-
-        try:
-            response = await self.bot.wait_for("message", check=check, timeout=30)
-            return response.content
-        except asyncio.TimeoutError:
-            await ctx.send("Prompt timed out after 30 seconds. Setup cancelled.")
-            return None
-
-    @commands.command(name="disable_welcome_channel")
+    @app_commands.command(
+        name="disable_welcome_channel",
+        description="Admin Only - Disables the welcome channel.",
+    )
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
-    async def disable_welcome_channel(self, msg: Message):
+    async def disable_welcome_channel(self, interaction: discord.Interaction):
         """Command that allows an admin to disable the welcome channel for a server."""
-        assert msg.guild
-        server_id = msg.guild.id
+        assert interaction.guild
+        server_id = interaction.guild.id
 
         # deletes existing welcome settings
         async with aiosqlite.connect(self.bot.db_path) as database:
@@ -57,7 +45,7 @@ class Config(commands.Cog):
             result = await cur.fetchone()
 
             if not result:
-                await msg.channel.send(
+                await interaction.response.send_message(
                     (
                         "No welcome channel has been set up yet. "
                         "No action was taken. To set up a welcome channel, "
@@ -68,7 +56,7 @@ class Config(commands.Cog):
 
             await cur.execute(delete_server_settings, (server_id,))
             await database.commit()
-            await msg.channel.send(
+            await interaction.response.send_message(
                 (
                     "Success! To re-enable the "
                     "welcome channel run !enable_welcome_channel"
