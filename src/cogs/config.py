@@ -145,7 +145,7 @@ class Config(commands.Cog):
             return ctx.author == msg.author and ctx.channel == msg.channel
 
         response = await self.bot.wait_for("message", check=check, timeout=30)
-        channels_for_rule: Union[Literal["all"], List[TextChannel]]
+        channels_for_rule: Union[Literal["all"], List[discord.TextChannel]]
         if response.content != "all":
             channels_for_rule = response.channel_mentions
 
