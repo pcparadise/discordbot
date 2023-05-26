@@ -10,10 +10,9 @@ class About(commands.Cog):
 
     def __init__(self, bot: PCParadiseBot):
         self.bot = bot
-        self.prefix = self.bot.config.get("prefix")
 
     @app_commands.command(name="contrib")
-    async def send_contribution_info(self, ctx):
+    async def send_contribution_info(self, interaction: discord.Interaction):
         """Contains information about how to contribute to the bot."""
 
         contributing_md_url = (
@@ -21,11 +20,10 @@ class About(commands.Cog):
         )
 
         embed = discord.Embed(
-            title="How To Contribute:",
-            description=f"Visit: [{contributing_md_url[8:]}]({contributing_md_url})",
+            description=f"[How To Contribute]({contributing_md_url})",
         )
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot: PCParadiseBot):
