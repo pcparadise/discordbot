@@ -222,6 +222,27 @@ class Config(commands.Cog):
             )
             await database.commit()
 
+    @commands.command(hidden=True)
+    async def sync(self, ctx, guild_id=None):
+        """
+        Synchronizes the bot's slash commands with the Discord API.
+        Arguments:
+        - `guild_id` (optional): The ID of the guild to sync commands for. \
+        If not provided, the bot will sync commands for all guilds.
+
+        Usage:
+        - `!sync`: Syncs all slash commands for all guilds the bot is a member of.
+        - `!sync <guild_id>`: Syncs all slash commands for a specific guild.
+        """
+        sync_msg = await ctx.reply("Syncing commands...")
+
+        if ctx.author.id not in self.bot.owners:
+            raise commands.errors.NotOwner()
+
+        guild_id = int(guild_id) if guild_id else None
+        fmt = await self.bot.tree.sync()
+        await sync_msg.edit(content=f"Synced `{len(fmt)}` command(s) globally.")
+
 
 # This function is called by the load_extension method on the bot.
 async def setup(bot):
