@@ -1,7 +1,9 @@
 """
 An example module for future contributors to reference using commands.
 """
+import discord
 from discord.ext import commands
+from discord import app_commands
 
 
 class ExampleCommandModule(commands.Cog):
@@ -17,15 +19,11 @@ class ExampleCommandModule(commands.Cog):
     # It makes heavy use of a python feature called "decorators."
     # I recommend looking into both async/await and decorators to
     # learn more about what's going on here.
-    @commands.command(name="ping", aliases=["pong", "poong"])
-    async def measure_ping(self, ctx):
-        """
-        Measures the bot latency to discord.
-        """
-        # quick hack to silence unused self warning, too lazy
-        # to do it properly
-        print(self.bot)
-        await ctx.send(f"Pong! 🏓 - {round(ctx.bot.latency *1000, 2)}ms")
+    @app_commands.command(name="hello", description="Say hello!")
+    @app_commands.describe(name="What's your name?")
+    async def measure_ping(self, interaction: discord.Interaction, name: str):
+        """Says hello to the user!"""
+        await interaction.response.send_message(f"hi, {name}!")
 
 
 # This function is called by the load_extension method on the bot.
