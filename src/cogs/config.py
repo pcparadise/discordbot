@@ -63,85 +63,31 @@ class Config(commands.Cog):
                 )
             )
 
-    @commands.command(name="enable_welcome_channel")
+    @app_commands.command(
+        name="enable_welcome_channel",
+        description="Admin Only - Enables a welcome channel.",
+    )
+    @app_commands.describe(
+        channel="The channel you would like to use as a welcome channel.",
+        word="The word you want to use.",
+        role="The role you want to assign.",
+    )
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def enable_welcome_channel(self, msg: Message):
+    async def enable_welcome_channel(
+        self,
+        interaction: discord.Interaction,
+        channel: discord.TextChannel,
+        role: discord.Role,
+        word: str,
+    ):
         """Enables a welcome channel where new users can verify \
         themselves by typing a certain word, and assigns \
         them a role based on their input."""
-        assert msg.guild
 
-        server_id = msg.guild.id
+        assert interaction.guild
 
-        def get_channel_id(guild: discord.Guild, channel: str) -> Union[int, None]:
-            """
-            Check if a channel is valid and return the channel ID if it is.
-            """
-            channel_id = None
-            if channel.startswith("<#"):
-                channel_id = int(channel.strip("<#>"))
-            elif channel.startswith("#"):
-                channel_name = channel.strip("#")
-                channel_object = discord.utils.get(
-                    guild.text_channels, name=channel_name
-                )
-                if channel_object:
-                    channel_id = channel_object.id
-            else:
-                try:
-                    channel_id = int(channel)
-                except ValueError:
-                    return None
-            if discord.utils.get(guild.text_channels, id=channel_id) is not None:
-                return channel_id
-            return None
-
-        channel_input = await self.prompt(
-            msg, "What is the channel you would like to use as a welcome channel?"
-        )
-        if not channel_input:
-            return
-        channel_id = get_channel_id(msg.guild, channel_input)
-        if channel_id is None:
-            await msg.channel.send("Invalid channel ID or mention. Exiting.")
-            return
-
-        detection_word = await self.prompt(
-            msg, "What is the detection word you want to use?"
-        )
-        if not detection_word:
-            return None
-
-        def get_role_id(guild: discord.Guild, role: str) -> Union[int, None]:
-            """
-            Check if a role is valid and return the role ID if it is.
-            """
-            role_id = None
-            if role.startswith("<@&"):
-                role_id = int(role.strip("<@&>"))
-            else:
-                try:
-                    role_id = int(role)
-                except ValueError:
-                    return None
-            if discord.utils.get(guild.roles, id=role_id) is not None:
-                return role_id
-            return None
-
-        role_input = await self.prompt(
-            msg,
-            (
-                "What is the _role_ you would like "
-                f"to assign when a user says _{detection_word}_ in <#{channel_id}>?"
-            ),
-        )
-        if not role_input:
-            return
-        role_id = get_role_id(msg.guild, role_input)
-        if role_id is None:
-            await msg.channel.send("Invalid Role ID or mention. Exiting.")
-            return
+        server_id = interaction.guild.id
 
         # updates the db with the new data
         async with aiosqlite.connect(self.bot.db_path) as database:
@@ -155,17 +101,28 @@ class Config(commands.Cog):
                 "DO UPDATE SET detection_word = excluded.detection_word, "
                 "role_id = excluded.role_id, welcome_channel_id = excluded.welcome_channel_id"
             )
-            res = await cur.execute(
-                insert_sql, (server_id, detection_word, role_id, channel_id)
-            )
+            res = await cur.execute(insert_sql, (server_id, word, role.id, channel.id))
             await database.commit()
+
             if res.rowcount >= 1:
-                await msg.channel.send(
-                    f"Success! Welcome channel has been enabled in <#{channel_id}>. "
-                    f"New users will now be able to verify by typing {detection_word}. "
-                    f"Also make sure your _role permissions_ are setup to how you want, "
-                    "this bot doesn't do that for you."
+                embed = discord.Embed(
+                    title="Success!",
+                    description=f"Channel: {channel.mention}\n"
+                    f"Verification role: {role.mention}\n"
+                    f"Verification word: `{word}`",
                 )
+
+                embed.add_field(
+                    name="Role Permissions",
+                    value=(
+                        "```fix\nPlease configure role permissions according "
+                        "to your desired functionality. For instance, you can restrict"
+                        " channel access until users receive the appropriate role.```"
+                    ),
+                    inline=False,
+                )
+
+                await interaction.response.send_message(embed=embed)
 
     @commands.command(name="add_activity_rule")
     @commands.has_permissions(administrator=True)
