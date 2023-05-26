@@ -69,15 +69,18 @@ class CustomHelp(commands.HelpCommand):
                 )
 
         if freestanding_commands:
-            visible_freestanding_commands = [cmd for cmd in freestanding_commands if not cmd.hidden]
+            visible_freestanding_commands = [
+                cmd for cmd in freestanding_commands if not cmd.hidden
+            ]
             if visible_freestanding_commands:
                 out.add_field(
                     name="Freestanding Commands:",
-                    value=codeblock("\n".join([cmd.name for cmd in visible_freestanding_commands])),
+                    value=codeblock(
+                        "\n".join([cmd.name for cmd in visible_freestanding_commands])
+                    ),
                     inline=False,
                 )
         return out
-
 
     @staticmethod
     def get_cog_help(cog: commands.Cog) -> discord.Embed:
@@ -103,7 +106,6 @@ class CustomHelp(commands.HelpCommand):
             )
 
         return out
-
 
     @staticmethod
     def get_command_help(cmd: commands.Command) -> discord.Embed:
