@@ -24,7 +24,6 @@ import migrations
 # List of cogs the bot will load on startup
 # Names should follow the dot-path notation (similar to imports)
 EXTENSIONS = [
-    "src.cogs.help",
     "src.cogs.about",
     "src.cogs.logging",
     "src.cogs.activity_tracking",
