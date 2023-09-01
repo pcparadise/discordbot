@@ -5,12 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: install poetry
+        run: pipx install poetry
       - name: Setup python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: install poetry
-        run: pip install poetry
+          cache: "poetry"
       - name: install dependencies.
         run: poetry install
       - name: run pylint
