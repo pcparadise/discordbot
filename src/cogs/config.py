@@ -125,8 +125,16 @@ class Config(commands.Cog):
 
                 await interaction.response.send_message(embed=embed)
 
-    @commands.command(name="add_activity_rule")
+    @app_commands.command(name="add_activity_rule")
+    @app_commands.describe(
+        channel="The channel you would like to use as a welcome channel.",
+        role_for_rule="The role you want to assign.",
+        message_count="The number of messages that must be sent.",
+        timeout="Timespan of the rule",
+        channels_for_rule="Either all, or a list of channels you wish to track.",
+    )
     @commands.has_permissions(administrator=True)
+    @commands.guild_only()
     async def add_rule(
         self,
         ctx: commands.Context,
