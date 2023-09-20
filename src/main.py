@@ -150,6 +150,8 @@ class PCParadiseBot(commands.Bot):
                 print(f"SUCCESS - {extension}")
             except commands.ExtensionNotFound:
                 print(f"FAILED - {extension}", file=sys.stderr)
+        
+        self.remove_command("help")
 
     def run(self):  # pylint: disable=W0221
         """
