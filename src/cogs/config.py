@@ -1,14 +1,15 @@
 """
 A config module that updates values.
 """
-from typing import List, Literal, Union
 import pytimeparse
 import aiosqlite
 
 import discord
+
 from discord.ext import commands
-from discord.message import Message
-from discord import app_commands
+from discord import Role, app_commands
+
+from src.utils.parsers import parse_text_channel, Ok, Err, ParseError
 
 
 class Config(commands.Cog):
@@ -124,67 +125,30 @@ class Config(commands.Cog):
 
                 await interaction.response.send_message(embed=embed)
 
-    @commands.command(name="add_activity_rule")
+    @app_commands.command(
+        name="add_activity_rule",
+        description="adds a rule to add a role based off of activity",
+    )
     @commands.has_permissions(administrator=True)
-    async def add_rule(self, msg: Message):
+    @commands.guild_only()
+    async def add_rule(
+        self,
+        ctx: discord.Interaction,
+        role_for_rule: Role,
+        message_count: int,
+        timeout: str,
+        channels_for_rule: str,
+    ):  # pylint: disable=too-many-arguments disable=too-many-locals
         """
         Adds a rule about activity tracking to the database for \
         assigning roles based off of channel activity.
         """
-        if not msg.guild:
-            await msg.reply(
-                "Please run the command from a server you would like to apply this rule too!"
-            )
-            return
-
-        await msg.reply(
-            "What channel(s) would you like to apply this rule for? Type all for all."
-        )
-
-        def check(ctx):
-            return ctx.author == msg.author and ctx.channel == msg.channel
-
-        response = await self.bot.wait_for("message", check=check, timeout=30)
-        channels_for_rule: Union[Literal["all"], List[discord.TextChannel]]
-        if response.content != "all":
-            channels_for_rule = response.channel_mentions
-
-            if not channels_for_rule:
-                await response.reply("No channel mentions passed. Exiting")
-                return
-        else:
-            channels_for_rule = "all"
-
-        await response.reply("What role would you like to apply?")
-        response: Message = await self.bot.wait_for("message", check=check, timeout=30)
-        role_for_rule = (
-            response.role_mentions[0]
-            if response.role_mentions
-            else msg.guild.get_role(int(response.content))
-            if response.content.isnumeric()
-            else None
-        )
-
-        if not role_for_rule:
-            await response.reply("Invalid roles passed. Ending")
-            return
-
-        await response.reply("What time period should this rule check activity for?")
-        response: Message = await self.bot.wait_for("message", check=check, timeout=30)
-
-        time_period: int | float | None = pytimeparse.parse(response.content)
+        time_period = pytimeparse.parse(timeout)
         if not time_period:
-            await response.reply("Failed to parse time. Ending")
-            return
+            await ctx.response.send_message("Could not parse time period.")
+            return None
 
-        await response.reply("How many messages do they have to send?")
-        response = await self.bot.wait_for("message", check=check, timeout=30)
-        message_count = int(response.content) if response.content.isnumeric() else None
-        if not message_count:
-            await response.reply("Failed to parse message count. Ending")
-            return
-
-        await response.reply("done!")
+        await ctx.response.send_message("done!")
         async with aiosqlite.connect(self.bot.db_path) as database:
             cur = await database.cursor()
             insert_settings_into = (
@@ -197,11 +161,11 @@ class Config(commands.Cog):
             )
             id_fetch = await cur.execute(
                 insert_settings_into,
-                (msg.guild.id, int(time_period), role_for_rule.id, message_count),
+                (ctx.guild.id, int(time_period), role_for_rule.id, message_count),
             )
 
             id_fetch = await id_fetch.fetchone()
-            assert not id_fetch
+            assert id_fetch
             activity_tracking_id = id_fetch[0]
 
             insert_into_activity_tracking_channels = (
@@ -214,8 +178,24 @@ class Config(commands.Cog):
             if channels_for_rule == "all":
                 await database.commit()
                 return
+
+            channels = []
+            remaining = channels_for_rule
+            while True:
+                match await parse_text_channel(ctx, remaining):
+                    case Ok(inner=(remaining, channel)):
+                        channels.append(channel)
+                    case Err(inner=ParseError.Eof):
+                        break
+                    case _:
+                        # we got an actual error here
+                        raise discord.ext.commands.BadArgument(
+                            message="channels_for_rules should be a list of channel mentions"
+                        )
+
+            # assert isinstance(channels_for_rule, List[GuildChannel])
             activity_tracking_channels = [
-                (channel.id, activity_tracking_id) for channel in channels_for_rule
+                (channel.id, activity_tracking_id) for channel in channels
             ]
             await cur.executemany(
                 insert_into_activity_tracking_channels, activity_tracking_channels
