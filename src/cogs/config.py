@@ -148,7 +148,6 @@ class Config(commands.Cog):
             await ctx.response.send_message("Could not parse time period.")
             return None
 
-        await ctx.response.send_message("done!")
         async with aiosqlite.connect(self.bot.db_path) as database:
             cur = await database.cursor()
             insert_settings_into = (
@@ -201,6 +200,7 @@ class Config(commands.Cog):
                 insert_into_activity_tracking_channels, activity_tracking_channels
             )
             await database.commit()
+        await ctx.response.send_message("done!")
 
     @commands.command(hidden=True)
     async def sync(self, ctx, guild_id=None):
