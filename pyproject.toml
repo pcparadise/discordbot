@@ -21,7 +21,7 @@ pytimeparse = "^1.1.8"
 [tool.poetry.dev-dependencies]
 black = "22.3.0"
 pylint = "^3.0.2"
-mypy = "~1.5"
+mypy = "~1.7"
 
 [tool.poetry.scripts]
 run = "src.main:main"
